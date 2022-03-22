@@ -13,5 +13,4 @@ set_target_properties(receiver PROPERTIES
 
 target_include_directories(receiver PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
-    ${CMAKE_CURRENT_SOURCE_DIR}/../commomn/
 )

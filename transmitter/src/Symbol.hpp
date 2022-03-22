@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/common.hpp"
-#include "transmitter/src/colors.hpp"
+#include "colors.hpp"
 
 #include <vector>
 
@@ -13,7 +13,8 @@ class Symbol {
     Symbol(int numrows, int numcols);
 
     Symbol invert() const;
-    common::Image mask(const common::Image &) const;
+    common::Image mask(const common::Image &,
+                       const common::Color &bg_color = colors::Blank) const;
     common::Image toImage(const common::Color &fg_color = colors::White,
                           const common::Color &bg_color = colors::Blank) const;
 
