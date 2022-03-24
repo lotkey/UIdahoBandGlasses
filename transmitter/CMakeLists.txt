@@ -3,7 +3,7 @@ project(transmitter)
 
 add_executable(transmitter
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Symbol.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Mask.cpp
     
     ${CMAKE_CURRENT_SOURCE_DIR}/src/common/Image.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/common/Color.cpp

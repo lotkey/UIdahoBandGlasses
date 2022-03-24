@@ -8,3 +8,4 @@ namespace common {}
 /// "#include "common/common.hpp""
 #include "Color.hpp"
 #include "Image.hpp"
+#include "Matrix.hpp"

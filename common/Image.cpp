@@ -1,95 +1,42 @@
 #include "Image.hpp"
-
-#include <stdexcept>
-#include <tuple>
-#include <vector>
+#include "Matrix.hpp"
 
 namespace common {
 Image::Image(int numrows, int numcols, const Color &fillColor)
-    : m_numrows(numrows), m_numcols(numcols) {
-    if (numrows <= 0) {
-        throw std::runtime_error("Image cannot have 0 or fewer rows.");
-    }
-    if (numcols <= 0) {
-        throw std::runtime_error("Image cannot have 0 or fewer columns.");
-    }
-
-    for (int i = 0; i < numrows; i++) {
-        m_pixels.push_back(std::vector<Color>());
-        for (int j = 0; j < numcols; j++) {
-            m_pixels[i].push_back(fillColor);
+    : Matrix<Color>(numrows, numcols) {
+    for (auto &row : m_data) {
+        for (auto &item : row) {
+            item = fillColor;
         }
     }
 }
 
-Image::Image(const std::vector<std::vector<Color>> &pixels)
-    : m_numrows(pixels.size()), m_numcols(pixels.front().size()) {
-    for (const auto &row : pixels) {
-        if (row.size() != m_numcols) {
-            throw std::runtime_error(
-                "All rows in an image must have the same number of pixels.");
-        }
-    }
+Image::Image(const std::vector<std::vector<Color>> &data)
+    : Matrix<Color>(data) {}
 
-    m_pixels = pixels;
-}
-
-std::pair<int, int> Image::shape() const { return {m_numrows, m_numcols}; }
-
-int Image::numRows() const { return m_numrows; }
-
-int Image::numCols() const { return m_numcols; }
+Image::Image(const Matrix<Color> &matrix) : Matrix<Color>(matrix) {}
 
 Image Image::resize(int numrows, int numcols) const {
-    Image resized = Image(numrows, numcols);
-
-    for (int i = 0; i < numrows; i++) {
-        float percentHeight = (float)i / (float)numrows;
-        float oldRow = percentHeight * numRows();
-
-        for (int j = 0; j < numcols; j++) {
-            float percentWidth = (float)j / (float)numcols;
-            float oldCol = percentWidth * numCols();
-
-            // Weighted sum of four pixels
-            Color weightedSum = Color();
-
-            float percentOriginalRow = 1.0 - (oldRow - (int)oldRow);
-            float percentOriginalCol = 1.0 - (oldCol - (int)oldCol);
-            bool edgeRow = oldRow >= numRows() - 1;
-            bool edgeCol = oldCol >= numCols() - 1;
-
-            Color origin = at((int)oldRow, (int)oldCol);
-            weightedSum +=
-                origin * (double)(percentOriginalRow * percentOriginalCol);
-
-            if (!edgeRow) {
-                Color neighbor = at((int)oldRow, (int)oldCol);
-                weightedSum += neighbor * ((1.0 - percentOriginalRow) *
-                                           percentOriginalCol);
-            }
-
-            if (!edgeCol) {
-                Color neighbor = at((int)oldRow, (int)oldCol + 1);
-                weightedSum += neighbor * (percentOriginalRow *
-                                           (1.0 - percentOriginalCol));
-            }
-
-            if (!(edgeRow || edgeCol)) {
-                Color neighbor = at((int)oldRow + 1, (int)oldCol + 1);
-                weightedSum += neighbor * ((1.0 - percentOriginalRow) *
-                                           (1.0 - percentOriginalCol));
-            }
-
-            resized.at(i, j) = weightedSum;
-        }
-    }
-    return resized;
+    return Matrix<Color>::resize(numrows, numcols);
 }
 
-Color &Image::at(int row, int column) { return m_pixels.at(row).at(column); }
+Image Image::invert() const {
+    Image inverted = *this;
+    for (int i = 0; i < inverted.numRows(); i++) {
+        for (int j = 0; j < inverted.numCols(); j++) {
+            inverted.at(i, j) = Color(255, 255, 255) - at(i, j);
+        }
+    }
+    return inverted;
+}
 
-const Color &Image::at(int row, int column) const {
-    return m_pixels.at(row).at(column);
+Image Image::recolor(const Color &color) const {
+    Image recolored = *this;
+    for (int i = 0; i < recolored.numRows(); i++) {
+        for (int j = 0; j < recolored.numCols(); j++) {
+            recolored.at(i, j) = color * at(i, j).brightness();
+        }
+    }
+    return recolored;
 }
 } // namespace common
