@@ -10,7 +10,7 @@ Mask::Mask(const common::Image &img)
     : common::Matrix<double>(img.numRows(), img.numCols()) {
     for (int i = 0; i < img.numRows(); i++) {
         for (int j = 0; j < img.numCols(); j++) {
-            at(i, j) = img.at(i, j).brightness() / 255.0;
+            at(i, j) = img.at(i, j).intensity() / 255.0;
         }
     }
 }
