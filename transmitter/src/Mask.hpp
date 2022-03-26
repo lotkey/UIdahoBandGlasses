@@ -11,11 +11,17 @@ namespace transmitter {
 /// images (smiley faces, shapes, etc.)
 class Mask : public common::Matrix<double> {
   public:
+    /// Constructs from image
     Mask(const common::Image &);
+    /// Constructs from size
     Mask(int numrows, int numcols);
 
+    /// Inverts mask
     Mask invert() const;
+    /// Returns masked image
     common::Image maskImage(common::Image) const;
+    /// Returns the mask as an image with optional foreground and background
+    /// colors
     common::Image toImage(const common::Color &fg_color = colors::White,
                           const common::Color &bg_color = colors::Blank);
 

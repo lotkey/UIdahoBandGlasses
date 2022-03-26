@@ -2,6 +2,12 @@
 #include "Matrix.hpp"
 
 namespace common {
+Image Image::noise(int numrows, int numcols) {
+    Image img(numrows, numcols);
+    img.apply([](Color color) { return Color::random(); });
+    return img;
+}
+
 Image::Image(int numrows, int numcols, const Color &fillColor)
     : Matrix<Color>(numrows, numcols) {
     apply([fillColor](Color color) { return fillColor; });

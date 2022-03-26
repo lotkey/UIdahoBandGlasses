@@ -8,6 +8,9 @@
 namespace common {
 class Image : public Matrix<Color> {
   public:
+    /// @returns A random image with the specified size
+    static Image noise(int numrows, int numcols);
+
     /// Construct an image from a given size and an optional fill color
     Image(int numrows, int numcols, const Color &fillColor = {});
     /// Construct an image from a 2D vector array
