@@ -12,6 +12,8 @@ class Color {
     /// @param s Saturation [0.0-1.0]
     /// @param v Value [0.0-1.0]
     static Color fromHSV(double h, double s, double v);
+    /// @returns A color from an encoded 8-bit color
+    static Color decode(uint8_t);
 
     Color();
     /// Construct from RGB values
@@ -21,10 +23,12 @@ class Color {
     /// Constructs from brightness [0.0 - 1.0]
     Color(double d);
 
-    /// Convert to string for printing and debuggin
+    /// Convert to string for printing and debugging
     std::string toString() const;
     /// @returns Brightness of the color on a scale of [0.0-1.0]
     double intensity() const;
+    /// @returns An 8-bit integer to represent a color
+    uint8_t encode() const;
 
     /// @returns Hue of the color on a scale of [0.0-1.0]
     double hue() const;
@@ -46,7 +50,6 @@ class Color {
     void setR(int);
     void setG(int);
     void setB(int);
-
 
     /// @returns Difference between two colors by RGB values
     double difference(const Color &) const;

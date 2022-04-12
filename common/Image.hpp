@@ -4,6 +4,7 @@
 #include "Matrix.hpp"
 
 #include <functional>
+#include <vector>
 
 namespace common {
 class Image : public Matrix<Color> {
@@ -30,6 +31,7 @@ class Image : public Matrix<Color> {
     Image hue(double h) const;
     /// @returns The image with only black and white pixels
     Image blackAndWhite() const;
+    std::vector<std::vector<uint8_t>> encoded() const;
 
   protected:
     Image(const Matrix<Color> &);

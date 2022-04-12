@@ -42,6 +42,16 @@ Color Color::fromHSV(double h, double s, double v) {
     return {(r + m) * 255, (g + m) * 255, (b + m) * 255};
 }
 
+Color Color::decode(uint8_t encoded) {
+    uint8_t r = (encoded >> 5) & 0b00000111;
+    uint8_t g = (encoded >> 2) & 0b00000111;
+    uint8_t b = encoded & 0b00000011;
+    r = (r / 8.f) * 255;
+    g = (g / 8.f) * 255;
+    b = (b / 4.f) * 255;
+    return Color(r, g, b);
+}
+
 Color::Color() : m_r(0), m_g(0), m_b(0) {}
 
 Color::Color(double r, double g, double b) {
@@ -73,6 +83,16 @@ double Color::intensity() const {
     double average = m_r + m_g + m_b;
     average /= 3.0;
     return clip(average) / 255.0;
+}
+
+uint8_t Color::encode() const {
+    uint8_t r = (m_r / 255.f) * 8;
+    uint8_t g = (m_g / 255.f) * 8;
+    uint8_t b = (m_b / 255.f) * 4;
+    uint8_t encoded = r & 0b00000111;
+    encoded = (encoded << 3) | (g & 0b00000111);
+    encoded = (encoded << 2) | (b & 0b00000011);
+    return encoded;
 }
 
 double Color::hue() const {

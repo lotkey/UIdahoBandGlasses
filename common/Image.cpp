@@ -1,6 +1,9 @@
 #include "Image.hpp"
 #include "Matrix.hpp"
 
+#include <cinttypes>
+#include <vector>
+
 namespace common {
 Image Image::noise(int numrows, int numcols) {
     Image img(numrows, numcols);
@@ -46,6 +49,30 @@ Image Image::hue(double h) const {
     Image hued = *this;
     hued.apply([h](Color color) { return color.withHue(h); });
     return hued;
+}
+
+Image Image::blackAndWhite() const {
+    Image bw = *this;
+    bw.apply([](Color color) {
+        float brightness = color.intensity();
+        if (brightness > .5) {
+            return Color(255, 255, 255);
+        } else {
+            return Color(0, 0, 0);
+        }
+    });
+    return bw;
+}
+
+std::vector<std::vector<uint8_t>> Image::encoded() const {
+    std::vector<std::vector<uint8_t>> encoded_img;
+    for (const auto &row : m_data) {
+        encoded_img.push_back(std::vector<uint8_t>());
+        for (const auto &color : row) {
+            encoded_img.back().push_back(color.encode());
+        }
+    }
+    return encoded_img;
 }
 
 void Image::apply(const std::function<Color(Color)> &func) {
