@@ -31,6 +31,7 @@ class Image : public Matrix<Color> {
     Image hue(double h) const;
     /// @returns The image with only black and white pixels
     Image blackAndWhite() const;
+    /// @returns A 2D vector of encoded colors
     std::vector<std::vector<uint8_t>> encoded() const;
 
   protected:
