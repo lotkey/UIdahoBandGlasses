@@ -5,7 +5,7 @@ function run_no_output() {
 }
 
 echo "Installing requirements..."
-run_no_output "apt install make cmake g++ clang-format libpng-dev git code"
+run_no_output "apt install make cmake g++ clang-format git code"
 echo "Requirements installed."
 echo ""
 

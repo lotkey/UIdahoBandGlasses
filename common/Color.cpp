@@ -158,8 +158,8 @@ double Color::difference(const Color &color) const {
 }
 
 Color Color::grayscale() const {
-    uint8_t value = intensity();
-    return {value, value, value};
+    double value = intensity();
+    return {value * 255, value * 255, value * 255};
 }
 
 Color Color::invert() const { return {255 - m_r, 255 - m_g, 255 - m_b}; }

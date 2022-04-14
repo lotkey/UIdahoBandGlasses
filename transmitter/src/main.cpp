@@ -1,3 +1,4 @@
+#include "BMP.hpp"
 #include "Mask.hpp"
 #include "colors.hpp"
 #include "common/common.hpp"
@@ -7,6 +8,11 @@
 
 int main() {
     srand(time(NULL));
-    common::Image img(10, 20);
+    BMP bmp("../imgs/test.bmp");
+    auto img = bmp.toImage();
+    // img = img.invert();
+    img = img.recolor(transmitter::colors::BlueViolet);
+    bmp = BMP(img);
+    bmp.save("../imgs/output.bmp");
     return 0;
 }

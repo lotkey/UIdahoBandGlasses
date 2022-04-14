@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
 project(transmitter)
+set(CMAKE_BUILD_TYPE Debug)
 
 add_executable(transmitter
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/BMP.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Mask.cpp
     

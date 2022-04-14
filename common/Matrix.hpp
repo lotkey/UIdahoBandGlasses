@@ -10,10 +10,16 @@ namespace common {
 /// Since this is a templated class, there is no corresponding source file.
 template <typename T> class Matrix {
   public:
+    Matrix();
     /// Construct matrix from size
     Matrix(int numrows, int numcols);
     /// Construct matrix from 2D array
     Matrix(const std::vector<std::vector<T>> &data);
+    Matrix(const Matrix &);
+    Matrix(Matrix &&);
+    ~Matrix();
+    void operator=(const Matrix &);
+    void operator=(Matrix &&);
 
     /// @returns A reference to the object at the position specified
     T &at(int row, int col);
@@ -29,9 +35,10 @@ template <typename T> class Matrix {
     Matrix<T> resize(int numrows, int numcols) const;
 
   protected:
-    const int m_numrows;
-    const int m_numcols;
-    std::vector<std::vector<T>> m_data;
+    int m_numrows;
+    int m_numcols;
+    T **m_data = nullptr;
+    // std::vector<std::vector<T>> m_data;
 
     /// @returns A weighted sum of references from a floating point position.
     /// at(1.4, 0.3) would return the weighted sum of these pixels:
@@ -40,19 +47,65 @@ template <typename T> class Matrix {
     /// - 1, 1 (60% * 30%)
     /// - 2, 1 (40% * 30%)
     T at(float row, float col) const;
+    void copyTo(Matrix &) const;
+    void moveTo(Matrix &);
+    void allocateMemory();
+    void freeMemory();
 };
+
+template <typename T> Matrix<T>::Matrix() {}
+
+template <typename T> Matrix<T>::Matrix(const Matrix<T> &m) { m.copyTo(*this); }
+
+template <typename T> Matrix<T>::Matrix(Matrix<T> &&m) { m.moveTo(*this); }
 
 template <typename T>
 Matrix<T>::Matrix(int numrows, int numcols)
     : m_numrows(numrows), m_numcols(numcols) {
-    for (int i = 0; i < numrows; i++) {
-        m_data.push_back(std::vector<T>(numcols, (T)0));
-    }
+    allocateMemory();
 }
 
 template <typename T>
 Matrix<T>::Matrix(const std::vector<std::vector<T>> &data)
-    : m_numrows(data.size()), m_numcols(data.front().size()), m_data(data) {}
+    : m_numrows(data.size()), m_numcols(data.front().size()) {
+    allocateMemory();
+    for (int i = 0; i < m_numrows; i++) {
+        for (int j = 0; j < m_numcols; j++) {
+            m_data[i][j] = m_data[i][j];
+        }
+    }
+}
+
+template <typename T> void Matrix<T>::operator=(const Matrix<T> &m) {
+    m.copyTo(*this);
+}
+
+template <typename T> void Matrix<T>::operator=(Matrix<T> &&m) {
+    m.moveTo(*this);
+}
+
+template <typename T> void Matrix<T>::allocateMemory() {
+    m_data = new T *[m_numrows];
+    for (int i = 0; i < m_numrows; i++) {
+        m_data[i] = new T[m_numcols];
+        for (int j = 0; j < m_numcols; j++) {
+            m_data[i][j] = (T)0;
+        }
+    }
+}
+
+template <typename T> Matrix<T>::~Matrix() { freeMemory(); }
+
+template <typename T> void Matrix<T>::freeMemory() {
+    if (m_data == nullptr) {
+        return;
+    }
+    for (int i = 0; i < m_numrows; i++) {
+        delete[] m_data[i];
+    }
+    delete[] m_data;
+    m_data = nullptr;
+}
 
 template <typename T> T &Matrix<T>::at(int row, int col) {
     return m_data[row][col];
@@ -112,5 +165,28 @@ template <typename T> T Matrix<T>::at(float row, float col) const {
     }
 
     return weightedSum;
+}
+
+template <typename T> void Matrix<T>::copyTo(Matrix<T> &m) const {
+    m.freeMemory();
+    m.m_numcols = m_numcols;
+    m.m_numrows = m_numrows;
+    m.allocateMemory();
+
+    for (int i = 0; i < m_numrows; i++) {
+        for (int j = 0; j < m_numcols; j++) {
+            m.m_data[i][j] = m_data[i][j];
+        }
+    }
+}
+
+template <typename T> void Matrix<T>::moveTo(Matrix<T> &m) {
+    m.m_data = m_data;
+    m.m_numcols = m_numcols;
+    m.m_numrows = m_numrows;
+
+    m_data = nullptr;
+    m_numcols = 0;
+    m_numrows = 0;
 }
 } // namespace common

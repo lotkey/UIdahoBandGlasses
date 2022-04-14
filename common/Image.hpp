@@ -3,6 +3,8 @@
 #include "Color.hpp"
 #include "Matrix.hpp"
 
+#include <png.h>
+
 #include <functional>
 #include <vector>
 
@@ -16,6 +18,7 @@ class Image : public Matrix<Color> {
     Image(int numrows, int numcols, const Color &fillColor = {});
     /// Construct an image from a 2D vector array
     Image(const std::vector<std::vector<Color>> &data);
+    Image resize(int numRows, int numCols);
 
     /// @returns The image with every pixel inverted
     Image invert() const;
@@ -32,12 +35,12 @@ class Image : public Matrix<Color> {
     /// @returns The image with only black and white pixels
     Image blackAndWhite() const;
     /// @returns A 2D vector of encoded colors
-    std::vector<std::vector<uint8_t>> encoded() const;
+    std::vector<uint8_t> encoded() const;
 
   protected:
     Image(const Matrix<Color> &);
 
     /// Applies the function to all pixels
-    void apply(const std::function<Color(Color)> &);
+    void apply(const std::function<void(Color &)> &);
 };
 } // namespace common
