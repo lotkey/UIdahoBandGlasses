@@ -1,2 +1,3 @@
 **/build/
-**/src/common/
+receiver/src/common/
+transmitter/src/common/
