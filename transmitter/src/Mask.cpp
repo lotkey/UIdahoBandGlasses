@@ -1,3 +1,4 @@
+// Chris McVickar
 #include "Mask.hpp"
 #include "colors.hpp"
 #include "common/common.hpp"

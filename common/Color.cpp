@@ -1,3 +1,4 @@
+// Chris McVickar
 #include "Color.hpp"
 
 #include <algorithm>
@@ -148,6 +149,19 @@ uint8_t Color::getR() const { return m_r; }
 uint8_t Color::getG() const { return m_g; }
 
 uint8_t Color::getB() const { return m_b; }
+
+uint8_t &Color::operator[](int channel) {
+    switch (channel) {
+    case 0:
+        return m_r;
+    case 1:
+        return m_g;
+    case 2:
+        return m_b;
+    default:
+        throw std::runtime_error("Color channel must be in the range [0-2]");
+    }
+}
 
 double Color::difference(const Color &color) const {
     double diffr = abs(m_r - color.getR());

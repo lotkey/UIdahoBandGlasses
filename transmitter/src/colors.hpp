@@ -1,3 +1,4 @@
+// Chris McVickar
 // RGB values courtesy of: https://www.rapidtables.com/web/color/RGB_Color.html
 #pragma once
 

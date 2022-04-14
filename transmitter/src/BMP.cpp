@@ -1,3 +1,4 @@
+// Chris McVickar
 #include "BMP.hpp"
 #include "common/common.hpp"
 

@@ -1,3 +1,4 @@
+// Chris McVickar
 #pragma once
 
 #include <tuple>
@@ -21,10 +22,20 @@ template <typename T> class Matrix {
     void operator=(const Matrix &);
     void operator=(Matrix &&);
 
+    const T *at(int row);
+    const T *at(int row) const;
     /// @returns A reference to the object at the position specified
     T &at(int row, int col);
     /// @returns A const reference to the object at the position specified
     const T &at(int row, int col) const;
+
+    const T *operator[](int row);
+    const T *operator[](int row) const;
+    const T *operator()(int row);
+    const T *operator()(int row) const;
+    const T &operator()(int row, int col) const;
+    T &operator()(int row, int col);
+
     /// @returns A pair with {numrows, numcols}
     std::pair<int, int> shape() const;
     /// @returns Number of rows in the matrix
@@ -107,12 +118,42 @@ template <typename T> void Matrix<T>::freeMemory() {
     m_data = nullptr;
 }
 
+template <typename T> const T *Matrix<T>::at(int row) const {
+    return m_data[row];
+}
+
+template <typename T> const T *Matrix<T>::at(int row) { return m_data[row]; }
+
 template <typename T> T &Matrix<T>::at(int row, int col) {
     return m_data[row][col];
 }
 
 template <typename T> const T &Matrix<T>::at(int row, int col) const {
     return m_data[row][col];
+}
+
+template <typename T> const T *Matrix<T>::operator[](int row) const {
+    return at(row);
+}
+
+template <typename T> const T *Matrix<T>::operator[](int row) {
+    return at(row);
+}
+
+template <typename T> const T *Matrix<T>::operator()(int row) const {
+    return at(row);
+}
+
+template <typename T> const T *Matrix<T>::operator()(int row) {
+    return at(row);
+}
+
+template <typename T> const T &Matrix<T>::operator()(int row, int col) const {
+    return at(row, col);
+}
+
+template <typename T> T &Matrix<T>::operator()(int row, int col) {
+    return at(row, col);
 }
 
 template <typename T> std::pair<int, int> Matrix<T>::shape() const {

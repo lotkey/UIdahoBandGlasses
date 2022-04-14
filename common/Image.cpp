@@ -1,3 +1,4 @@
+// Chris McVickar
 #include "Image.hpp"
 #include "Matrix.hpp"
 

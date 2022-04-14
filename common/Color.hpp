@@ -1,3 +1,4 @@
+// Chris McVickar
 #pragma once
 
 #include <stdint.h>
@@ -50,6 +51,7 @@ class Color {
     void setR(int);
     void setG(int);
     void setB(int);
+    uint8_t &operator[](int);
 
     /// @returns Difference between two colors by RGB values
     double difference(const Color &) const;
