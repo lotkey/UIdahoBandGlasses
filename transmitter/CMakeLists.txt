@@ -4,10 +4,10 @@ set(CMAKE_BUILD_TYPE Debug)
 
 add_executable(transmitter
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BMP.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Image.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Mask.cpp
     
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/common/Image.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/common/Color.cpp
 )
 

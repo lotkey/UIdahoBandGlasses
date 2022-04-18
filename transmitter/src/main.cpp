@@ -8,11 +8,9 @@
 
 int main() {
     srand(time(NULL));
-    BMP bmp("../imgs/test.bmp");
-    auto img = bmp.toImage();
-    // img = img.invert();
-    img = img.recolor(transmitter::colors::BlueViolet);
-    bmp = BMP(img);
+    transmitter::BMP bmp("../imgs/test.bmp");
+    auto img = bmp.toImage().compress();
+    bmp = transmitter::BMP(img);
     bmp.save("../imgs/output.bmp");
     return 0;
 }

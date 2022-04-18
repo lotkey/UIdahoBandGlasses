@@ -1,5 +1,6 @@
 // Chris McVickar
 #include "Mask.hpp"
+#include "Image.hpp"
 #include "colors.hpp"
 #include "common/common.hpp"
 
@@ -7,8 +8,7 @@
 #include <vector>
 
 namespace transmitter {
-Mask::Mask(const common::Image &img)
-    : common::Matrix<double>(img.numRows(), img.numCols()) {
+Mask::Mask(const Image &img) : Matrix<double>(img.numRows(), img.numCols()) {
     for (int i = 0; i < img.numRows(); i++) {
         for (int j = 0; j < img.numCols(); j++) {
             at(i, j) = img.at(i, j).intensity() / 255.0;
@@ -16,8 +16,7 @@ Mask::Mask(const common::Image &img)
     }
 }
 
-Mask::Mask(int numrows, int numcols)
-    : common::Matrix<double>(numrows, numcols) {}
+Mask::Mask(int numrows, int numcols) : Matrix<double>(numrows, numcols) {}
 
 Mask::Mask(const Matrix<double> &matrix) : Matrix<double>(matrix) {}
 
@@ -31,7 +30,7 @@ Mask Mask::invert() const {
     return inverted;
 }
 
-common::Image Mask::maskImage(common::Image img) const {
+Image Mask::maskImage(Image img) const {
     if (img.shape() != shape()) {
         throw std::runtime_error("Mask and image must be the same size");
     }
@@ -45,9 +44,9 @@ common::Image Mask::maskImage(common::Image img) const {
     return img;
 }
 
-common::Image Mask::toImage(const common::Color &fg_color,
-                            const common::Color &bg_color) {
-    common::Image img(numRows(), numCols());
+Image Mask::toImage(const common::Color &fg_color,
+                    const common::Color &bg_color) {
+    Image img(numRows(), numCols());
     for (int i = 0; i < numRows(); i++) {
         for (int j = 0; j < numCols(); j++) {
             img.at(i, j) = fg_color * at(i, j) + bg_color * (1.0 - at(i, j));

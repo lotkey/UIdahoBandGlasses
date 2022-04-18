@@ -2,6 +2,8 @@
 #include "Color.hpp"
 
 #include <algorithm>
+#include <bitset>
+#include <iostream>
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -44,12 +46,19 @@ Color Color::fromHSV(double h, double s, double v) {
 }
 
 Color Color::decode(uint8_t encoded) {
-    uint8_t r = (encoded >> 5) & 0b00000111;
-    uint8_t g = (encoded >> 2) & 0b00000111;
-    uint8_t b = encoded & 0b00000011;
-    r = (r / 8.f) * 255;
-    g = (g / 8.f) * 255;
-    b = (b / 4.f) * 255;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+
+    b = encoded & 0b00000011;
+    encoded = encoded >> 2;
+    g = encoded & 0b00000111;
+    encoded = encoded >> 3;
+    r = encoded & 0b00000111;
+
+    r = (r / 7.f) * 255;
+    g = (g / 7.f) * 255;
+    b = (b / 3.f) * 255;
     return Color(r, g, b);
 }
 
@@ -87,9 +96,9 @@ double Color::intensity() const {
 }
 
 uint8_t Color::encode() const {
-    uint8_t r = (m_r / 255.f) * 8;
-    uint8_t g = (m_g / 255.f) * 8;
-    uint8_t b = (m_b / 255.f) * 4;
+    uint8_t r = (m_r / 255.f) * 7;
+    uint8_t g = (m_g / 255.f) * 7;
+    uint8_t b = (m_b / 255.f) * 3;
     uint8_t encoded = r & 0b00000111;
     encoded = (encoded << 3) | (g & 0b00000111);
     encoded = (encoded << 2) | (b & 0b00000011);
@@ -232,3 +241,7 @@ uint8_t Color::min() const { return std::min(m_r, std::min(m_g, m_b)); }
 
 uint8_t Color::delta() const { return max() - min(); }
 } // namespace common
+
+namespace std {
+std::string to_string(const common::Color &color) { return color.toString(); }
+} // namespace std
