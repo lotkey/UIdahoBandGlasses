@@ -1,1 +1,1 @@
-g++ -o ht13 ht13.cpp packs.hpp -lftdi -lcurses 
+g++ -o ht13 ht13.cpp -lftdi -lcurses 

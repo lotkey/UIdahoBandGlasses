@@ -24,11 +24,12 @@
 
 #include <ftdi.h>
 #include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
 /* #include <time.h> */
 /* #include <sys/times.h> */
-#include <curses.h>
+// #include <curses.h>
 
 #include "packs.hpp"
 
@@ -134,34 +135,24 @@ int main() {
     printf("broadcasting.\n");
 
     // open curses session for display purposes
-    initscr();
-    raw();
-    keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
-    noecho();
-    attron(A_BOLD);
-    printw("Hello, welcome to Ben's Halftime Toolkit!\n");
-    printw("a=twinkle routine; r=red flash; e=green flash; b=blue flash\n");
-    printw("d=dark; g=gold flash;  w=white flash; t=test\n");
-    printw("n=gold on; o=white on; v=orange\n");
-    printw("m=magenta; y=yellow flash;  k=cyan flash\n");
-    printw("c=christmas sparkle;  k=cyan flash\n");
-    printw("f=twink8; h=twink9; j=twink10; l= twink11\n");
-    printw("s=rainbow short;  p=rainbow med\n");
-    printw("q=sparkle; x=XMas solid; z=slow twinkle\n");
-    printw("[=marqee one way; ]=marqee the other;\n");
-    printw("(=slow marqee one way; )=slow marqee the other;\n");
-    printw("\n");
-    printw(" comma key <,> to stop loop\n");
-    printw(" dot key <.> to quit\n");
+    std::cout << "Hello, welcome to Ben's Halftime Toolkit!\n"
+              << "a=twinkle routine; r=red flash; e=green flash; b=blue flash\n"
+              << "d=dark; g=gold flash;  w=white flash; t=test\n"
+              << "n=gold on; o=white on; v=orange\n"
+              << "m=magenta; y=yellow flash;  k=cyan flash\n"
+              << "c=christmas sparkle;  f=twink9; h=twink9; j=twink10; l=twink11\n"
+              << "s=rainbow short;  p=rainbow med\n"
+              << "q=sparkle; x=XMas solid; z=slow twinkle\n"
+              << "[=marqee one way; ]=marqee the other;\n"
+              << "(=slow marqee one way; )=slow marqee the other;\n\n"
+              << " comma key <,> to stop loop\n"
+              << " dot key <.> to quit\n";
+
+    system("stty raw"); // enter raw mode so no newline is required for getchar
 
     // loop until a '.' character is detected
     do {
-        letter = getch();
-        move(15, 0);
-        printw("%c", (letter == -1 ? ' ' : letter));
-        move(15, 0);
-        refresh();
+        letter = getchar();
         switch (letter) {
 
         case 'c': // christmas sparkle
@@ -182,7 +173,7 @@ int main() {
                 usleep(SLP);
                 nbytes = ftdi_write_data(ftdi, dPack, m);
                 usleep(SLP);
-            } while (getch() != ',');
+            } while (getchar() != ',');
             break;
 
         case 'p': // rainbow med
@@ -222,7 +213,7 @@ int main() {
                 }
                 nbytes = ftdi_write_data(ftdi, sorc, m);
                 usleep(DAB);
-            } while (getch() != ',');
+            } while (getchar() != ',');
             break;
 
         case '{': // slow marqee left
@@ -244,7 +235,7 @@ int main() {
                 }
                 nbytes = ftdi_write_data(ftdi, sorc, m);
                 usleep(SLOW);
-            } while (getch() != ',');
+            } while (getchar() != ',');
             break;
 
         default:
@@ -252,12 +243,7 @@ int main() {
         }
         nbytes = ftdi_write_data(ftdi, dPack, m);
         // Draw a space over current character
-        move(14, 0);
-        printw(" ");
-        refresh();
     } while (letter != '.');
-
-    endwin(); // close curses session
 
     // close ftdi device connection
     if ((ret = ftdi_usb_close(ftdi)) < 0) {
@@ -271,30 +257,8 @@ int main() {
     printf("End of program.\n");
 
     return EXIT_SUCCESS;
-} // END main
+}
 
-void rotate13(uint8_t arr[]) {
-    // This routine rotates the values in the lower 13 channels (channels 0-12)
-    // since the flags are on channels 13 and 14, they are left alone
-    uint8_t r, g, b;
-    int i, j, nrot;
-
-    r = arr[0];
-    g = arr[1];
-    b = arr[2];
-
-    nrot = 13;
-    for (i = 3; i < nrot * 3; i++) {
-        j = i + 48;
-        arr[i - 3] = arr[i];
-        arr[j - 3] = arr[j];
-    } // for i
-
-    arr[nrot * 3] = r;
-    arr[nrot * 3 + 1] = g;
-    arr[nrot * 3 + 2] = b;
-
-} // END rotate12
 
 static size_t getEncodedBufferSize(size_t sourceSize) {
     size_t s;

@@ -1,6 +1,3 @@
-#include <curses.h>
-
-
 uint8_t temp[3] = {};
 uint8_t dPack[96] = {};
 uint8_t rain5Pack[96] = {
