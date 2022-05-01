@@ -1,17 +1,3 @@
-#include <ftdi.h>
-#include <stdio.h>
-#include <iostream>
-#include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-
-
-#include "BMP.hpp"
-#include "Mask.hpp"
-#include "Image.hpp"
-#include "colors.hpp"
-#include "common.hpp"
-
 /* ht13.cpp
  * compile: gcc -O2 ht13.c -lftdi -lncurses -o ht13
  * this program transmits dmx-style rgb packets
@@ -36,6 +22,17 @@
  * 4/26/2022
  */
 
+#include <ftdi.h>
+#include <stdio.h>
+#include <iostream>
+#include <stdlib.h>
+#include <unistd.h>
+/* #include <time.h> */
+/* #include <sys/times.h> */
+// #include <curses.h>
+
+#include "packs.hpp"
+
 #define DOT 100000
 #define DASH 300000
 #define SLOW 500000
@@ -54,19 +51,6 @@ uint8_t dest[96] = {};
 void rotate13(uint8_t arr[]);
 
 int main() {
-<<<<<<< HEAD
-    srand(time(NULL));
-    transmitter::BMP bmp("../imgs/test.bmp");
-    auto img = bmp.toImage().compress();
-    bmp = transmitter::BMP(img);
-    bmp.save("../imgs/output.bmp");
-    return 0;
-}
-=======
-    int x = 50; // num of people in X axis
-    int y = 50; // num of people in Y axis
-    common::Image imageToSend = common::Image(x, y, transmitter::colors::AliceBlue);
-
     struct ftdi_context *ftdi; // ftdi context for transmitter we are using
     struct ftdi_device_list *devlist, *curdev;
     char manufacturer[128]; // name of manufacturer of transmitter
@@ -173,7 +157,7 @@ int main() {
 
         case 'c': // christmas sparkle
             do {
-                nbytes = ftdi_write_data(ftdi, imageToSend.encoded(), m);
+                nbytes = ftdi_write_data(ftdi, X1Pack, m);
                 usleep(SLP);
                 nbytes = ftdi_write_data(ftdi, dPack, m);
                 usleep(SLP);
@@ -282,4 +266,3 @@ static size_t getEncodedBufferSize(size_t sourceSize) {
     // printf("buffer size is : %zd.\n", s);
     return s;
 }
->>>>>>> c37b4a923ef561d9e2a11ee8b17a9c55b84ae5c9

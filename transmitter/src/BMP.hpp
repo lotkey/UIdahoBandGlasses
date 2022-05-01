@@ -1,7 +1,11 @@
 // Chris McVickar
 #pragma once
+<<<<<<< HEAD
 #include "Image.hpp"
 #include "common/common.hpp"
+=======
+#include "common.hpp"
+>>>>>>> c37b4a923ef561d9e2a11ee8b17a9c55b84ae5c9
 
 #include <filesystem>
 #include <fstream>

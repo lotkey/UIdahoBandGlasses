@@ -1,0 +1,1 @@
+g++ -o ht13 ht13.cpp -lftdi -lcurses 

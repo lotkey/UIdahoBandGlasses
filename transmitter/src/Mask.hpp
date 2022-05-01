@@ -4,7 +4,7 @@
 #include "Image.hpp"
 #include "Matrix.hpp"
 #include "colors.hpp"
-#include "common/common.hpp"
+#include "common.hpp"
 
 #include <tuple>
 #include <vector>
