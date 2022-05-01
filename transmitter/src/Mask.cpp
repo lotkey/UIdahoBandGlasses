@@ -1,7 +1,7 @@
 // Chris McVickar
 #include "Mask.hpp"
 #include "colors.hpp"
-#include "common/common.hpp"
+#include "common.hpp"
 
 #include <tuple>
 #include <vector>

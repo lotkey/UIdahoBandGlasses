@@ -1,6 +1,6 @@
 // Chris McVickar
 #pragma once
-#include "common/common.hpp"
+#include "common.hpp"
 
 #include <filesystem>
 #include <fstream>
