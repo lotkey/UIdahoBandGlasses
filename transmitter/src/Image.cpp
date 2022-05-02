@@ -42,7 +42,7 @@ Image Image::invert() const {
 Image Image::recolor(const common::Color &hue) const {
     Image recolored = *this;
     recolored.apply(
-        [hue](common::Color &color) { color = hue * color.intensity(); });
+        [hue](common::Color &color) { color = hue; });
     return recolored;
 }
 

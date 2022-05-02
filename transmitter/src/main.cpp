@@ -52,7 +52,7 @@ int main() {
     int x = 32; // num of people in X axis
     int y = 3; // num of people in Y axis
     int arraySize = x*y;
-    transmitter::Image imageToSend = transmitter::Image(x, y, transmitter::colors::ForestGreen);
+    transmitter::Image imageToSend = transmitter::Image(x, y, transmitter::colors::Blank);
     uint8_t* arrayToSend = new u_int8_t[arraySize];
     bool wasSuccess = imageToSend.encode(arrayToSend, arraySize);
 
@@ -98,59 +98,15 @@ int main() {
         switch (letter) {
 
         case 'r':
-            sendFlash(ftdi, imageToSend, transmitter::colors::AliceBlue, arrayToSend, arraySize);
+            sendFlash(ftdi, imageToSend, transmitter::colors::DarkRed, arrayToSend, arraySize);
             break;
 
-        case 'a':
-            sendFlash(ftdi, imageToSend, transmitter::colors::AntiqueWhite, arrayToSend, arraySize);
+        case 'b':
+            sendFlash(ftdi, imageToSend, transmitter::colors::Blue, arrayToSend, arraySize);
             break;
-        case 'c': // christmas sparkle
-            do {
-                
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
-                usleep(SLP);
-                
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
-                usleep(SLP);
-                
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
-                usleep(SLP);
-                
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
-                usleep(SLP);
-                
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
-                 usleep(SLP);
-                
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-                usleep(SLP);
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-                usleep(SLP);
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-                usleep(SLP);
-            } while (getchar() != ',');
+        case 'g':
+            sendFlash(ftdi, imageToSend, transmitter::colors::Green, arrayToSend, arraySize);
             break;
-
-        case 'p': // rainbow med
-            nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-            usleep(DASH);
-            nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-            usleep(DAB);
-            nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-            usleep(DASH);
-            nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-            usleep(DAB);
-            nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-            usleep(DASH);
-            nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-            usleep(DAB);
-            nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-            usleep(DASH);
-            nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-            usleep(DAB);
-            nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-            break;
-
         default:
             usleep(DAB);
         }
@@ -250,7 +206,9 @@ int closeFTDIConnection(ftdi_context* ftdi) {
 
 int sendFlash(ftdi_context* ftdi, transmitter::Image& image, 
                common::Color newColor, uint8_t* arrayToSend, int arraySize) {
-    image.recolor(newColor).encode(arrayToSend, arraySize);
+    image = image.recolor(newColor);
+    image.encode(arrayToSend, arraySize);
+    // printf("%d ", image.recolor(newColor).encode(arrayToSend, arraySize));
     printf("%d ", arrayToSend[0]);
     int nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
     usleep(SLP);
