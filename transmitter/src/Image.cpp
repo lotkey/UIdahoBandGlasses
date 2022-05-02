@@ -3,7 +3,7 @@
 #include "Matrix.hpp"
 #include "common/common.hpp"
 
-#include <png.h>
+// #include <png.h>
 
 #include <cinttypes>
 #include <iostream>
@@ -96,6 +96,21 @@ std::vector<uint8_t> Image::encode() const {
     }
     return encoded_img;
 }
+
+bool Image::encode(uint8_t array[], int n) const {
+    int numRow = numRows();
+    int numCol = numCols();
+    if (n != numRow*numCol || n <= 0) {
+        return false;
+    }
+    for (int i=0; i < numRow; i++) {
+        for (int j=0; j < numCol; j++) {
+            array[i * numCol + j] = m_data[i][j].encode();
+        }
+    }
+    return true;
+}
+
 
 void Image::apply(const std::function<void(common::Color &)> &func) {
     for (int i = 0; i < numRows(); i++) {

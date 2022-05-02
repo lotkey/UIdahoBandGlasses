@@ -4,7 +4,7 @@
 #include "Matrix.hpp"
 #include "common/common.hpp"
 
-#include <png.h>
+// #include <png.h>
 
 #include <functional>
 #include <vector>
@@ -38,6 +38,11 @@ class Image : public Matrix<common::Color> {
     Image compress() const;
     /// @returns A 2D vector of encoded colors
     std::vector<uint8_t> encode() const;
+
+    /// @param array uint8_t array that encode() updates
+    /// @param n size of array
+    /// @returns true if encode() was successful, false else
+    bool encode(uint8_t array[], int n) const;
 
   protected:
     Image(const Matrix<common::Color> &);
