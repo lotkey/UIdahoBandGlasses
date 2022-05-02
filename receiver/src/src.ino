@@ -123,13 +123,18 @@ void handle_rx()
   rx_info_t* info = mrf.get_rxinfo();
   uint8_t encodedColor = info->rx_data[startId];
   Serial.println(encodedColor);
-  Serial.println("\n The dipswitch value is: ");
-  Serial.println(startId);
-  Serial.println("\n");
   uint8_t red = 0;
   uint8_t blue = 0;
   uint8_t green = 0;
+  
   decodeColor(encodedColor, &red, &green, &blue);
+  Serial.print(red);
+  Serial.print(" ");
+  Serial.print(green);
+  Serial.print(" ");
+  Serial.print(blue);
+  Serial.print("\n");
+
   setColor(red, green, blue);
  
   mrf.rx_flush();
