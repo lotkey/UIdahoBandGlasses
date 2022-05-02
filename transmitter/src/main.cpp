@@ -46,12 +46,13 @@ uint8_t* getEncodedArrayFromImage(const transmitter::Image& image);
 bool initializeFTDI(ftdi_context* ftdi);
 int setupFTDIConnection(ftdi_context* ftdi);
 int closeFTDIConnection(ftdi_context* ftdi);
-
+int sendFlash(ftdi_context* ftdi, transmitter::Image& image, 
+               common::Color newColor, uint8_t* arrayToSend, int arraySize);
 int main() {
     int x = 32; // num of people in X axis
     int y = 3; // num of people in Y axis
     int arraySize = x*y;
-    transmitter::Image imageToSend = transmitter::Image(x, y, transmitter::colors::Red);
+    transmitter::Image imageToSend = transmitter::Image(x, y, transmitter::colors::ForestGreen);
     uint8_t* arrayToSend = new u_int8_t[arraySize];
     bool wasSuccess = imageToSend.encode(arrayToSend, arraySize);
 
@@ -96,18 +97,31 @@ int main() {
         letter = getchar();
         switch (letter) {
 
+        case 'r':
+            sendFlash(ftdi, imageToSend, transmitter::colors::AliceBlue, arrayToSend, arraySize);
+            break;
+
+        case 'a':
+            sendFlash(ftdi, imageToSend, transmitter::colors::AntiqueWhite, arrayToSend, arraySize);
+            break;
         case 'c': // christmas sparkle
             do {
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
+                
+                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
                 usleep(SLP);
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
+                
+                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
                 usleep(SLP);
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
+                
+                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
                 usleep(SLP);
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
+                
+                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
                 usleep(SLP);
-                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
-                usleep(SLP);
+                
+                nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);         
+                 usleep(SLP);
+                
                 nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
                 usleep(SLP);
                 nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
@@ -140,7 +154,7 @@ int main() {
         default:
             usleep(DAB);
         }
-        // nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
+        nbytes = sendFlash(ftdi, imageToSend, transmitter::colors::Blank, arrayToSend, arraySize);
         // Draw a space over current character
     } while (letter != '.');
 
@@ -233,3 +247,14 @@ int closeFTDIConnection(ftdi_context* ftdi) {
     ftdi_free(ftdi);
     return errors;
 }
+
+int sendFlash(ftdi_context* ftdi, transmitter::Image& image, 
+               common::Color newColor, uint8_t* arrayToSend, int arraySize) {
+    image.recolor(newColor).encode(arrayToSend, arraySize);
+    printf("%d ", arrayToSend[0]);
+    int nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
+    usleep(SLP);
+
+    return nbytes;
+}
+
