@@ -61,6 +61,14 @@ int main() {
     int nbytes = 0; // number of bytes a package sent (global variable)
     
 
+    // initialize new ftdi device
+    if ((ftdi = ftdi_new()) == 0) {
+        fprintf(stderr, "ftdi_new failed\n");
+        return 1;
+    } else {
+        fprintf(stderr, "ftdi_new success\n");
+    }
+
     if (setupFTDIConnection(ftdi) != 0) {
         return EXIT_FAILURE;
     }
@@ -132,7 +140,7 @@ int main() {
         default:
             usleep(DAB);
         }
-        nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
+        // nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
         // Draw a space over current character
     } while (letter != '.');
 
@@ -152,14 +160,6 @@ int setupFTDIConnection(ftdi_context* ftdi) {
     char manufacturer[128]; // name of manufacturer of transmitter
     char description[128];  // description of transmistter
     int errors; // used throughout to check if there were any errors with FTDI stuff
-
-    // initialize new ftdi device
-    if ((ftdi = ftdi_new()) == 0) {
-        fprintf(stderr, "ftdi_new failed\n");
-        return 1;
-    } else {
-        fprintf(stderr, "ftdi_new success\n");
-    }
 
     // detect connected ftdi device(s)
     if ((numDevicesFound = ftdi_usb_find_all(ftdi, &devlist, 0x0403, 0x6001)) < 0) {
