@@ -1,6 +1,11 @@
 // Chris McVickar
 #include "BMP.hpp"
+<<<<<<< HEAD
+#include "Image.hpp"
+#include "common/common.hpp"
+=======
 #include "common.hpp"
+>>>>>>> c37b4a923ef561d9e2a11ee8b17a9c55b84ae5c9
 
 #include <filesystem>
 #include <fstream>
@@ -9,6 +14,7 @@
 #include <string>
 #include <vector>
 
+namespace transmitter {
 BMP::BMP(const std::filesystem::path &img_path) { load(img_path); }
 
 void BMP::load(const std::filesystem::path &img_path) {
@@ -85,11 +91,9 @@ void BMP::load(const std::filesystem::path &img_path) {
     }
 }
 
-BMP::BMP(const common::Image &img) {
+BMP::BMP(const Image &img) {
     m_infoHeader.width = img.numCols();
     m_infoHeader.height = img.numRows();
-    std::cout << "Creating BMP of size: " << img.numCols() << ", "
-              << img.numRows() << std::endl;
     m_infoHeader.size = sizeof(InfoHeader);
     m_fileHeader.offset_data = sizeof(FileHeader) + sizeof(InfoHeader);
 
@@ -110,8 +114,8 @@ BMP::BMP(const common::Image &img) {
     }
 }
 
-common::Image BMP::toImage() const {
-    common::Image img(m_infoHeader.height, m_infoHeader.width);
+Image BMP::toImage() const {
+    Image img(m_infoHeader.height, m_infoHeader.width);
 
     for (int i = 0; i < img.numRows(); i++) {
         for (int j = 0; j < img.numCols(); j++) {
@@ -228,3 +232,4 @@ void BMP::checkColorHeader(ColorHeader &m_colorHeader) const {
             "Unexpected color space type! The program expects sRGB values");
     }
 }
+} // namespace transmitter

@@ -109,3 +109,7 @@ class Color {
     uint8_t delta() const;
 };
 } // namespace common
+
+namespace std {
+std::string to_string(const common::Color &color);
+}

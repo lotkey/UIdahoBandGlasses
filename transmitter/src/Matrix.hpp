@@ -1,10 +1,19 @@
 // Chris McVickar
 #pragma once
 
+<<<<<<< HEAD
+#include <iostream>
+#include <math.h>
+#include <tuple>
+#include <vector>
+
+namespace transmitter {
+=======
 #include <tuple>
 #include <vector>
 
 namespace common {
+>>>>>>> c37b4a923ef561d9e2a11ee8b17a9c55b84ae5c9
 /// Class for templated, fixed-size matrices.
 /// Any "modifiers" return a modified copy.
 /// Base class for Images and Masks.
@@ -186,6 +195,34 @@ Matrix<T> Matrix<T>::resize(int numrows, int numcols) const {
 template <typename T> T Matrix<T>::at(float row, float col) const {
     T weightedSum = (T)0;
     float percentRow1 = row - (int)row;
+<<<<<<< HEAD
+    float percentRow0 = 1.f - percentRow1;
+    float percentCol1 = col - (int)col;
+    float percentCol0 = 1.f - percentCol1;
+
+    float pixelPercents[2][2] = {
+        {percentRow0 * percentCol0, percentRow0 * percentCol1},
+        {percentRow1 * percentCol0, percentRow1 * percentCol1}};
+
+    T base = at((int)row, (int)col);
+    T ts[2][2] = {{base, base}, {base, base}};
+
+    if ((int)row < numRows() - 1) {
+        ts[1][0] = at((int)row + 1, (int)col);
+    }
+    if ((int)col < numCols() - 1) {
+        ts[0][1] = at((int)row, (int)col + 1);
+    }
+    if ((int)row < numRows() - 1 && (int)col < numCols() - 1) {
+        ts[1][1] = at((int)row + 1, (int)col + 1);
+    }
+
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            T weighted = ts[i][j] * pixelPercents[i][j];
+            weightedSum += weighted;
+        }
+=======
     float percentRow0 = 1.0 - percentRow1;
     float percentCol1 = col - (int)col;
     float percentCol0 = 1.0 - percentCol0;
@@ -203,6 +240,7 @@ template <typename T> T Matrix<T>::at(float row, float col) const {
     }
     if ((int)row < numRows() - 1 && (int)col < numCols() - 1) {
         weightedSum += at((int)row + 1, (int)col + 1) * pixelPercents[1][1];
+>>>>>>> c37b4a923ef561d9e2a11ee8b17a9c55b84ae5c9
     }
 
     return weightedSum;
@@ -230,4 +268,8 @@ template <typename T> void Matrix<T>::moveTo(Matrix<T> &m) {
     m_numcols = 0;
     m_numrows = 0;
 }
+<<<<<<< HEAD
+} // namespace transmitter
+=======
 } // namespace common
+>>>>>>> c37b4a923ef561d9e2a11ee8b17a9c55b84ae5c9

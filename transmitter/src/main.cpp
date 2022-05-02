@@ -54,6 +54,15 @@ uint8_t dest[96] = {};
 void rotate13(uint8_t arr[]);
 
 int main() {
+<<<<<<< HEAD
+    srand(time(NULL));
+    transmitter::BMP bmp("../imgs/test.bmp");
+    auto img = bmp.toImage().compress();
+    bmp = transmitter::BMP(img);
+    bmp.save("../imgs/output.bmp");
+    return 0;
+}
+=======
     int x = 50; // num of people in X axis
     int y = 50; // num of people in Y axis
     common::Image imageToSend = common::Image(x, y, transmitter::colors::AliceBlue);
@@ -273,3 +282,4 @@ static size_t getEncodedBufferSize(size_t sourceSize) {
     // printf("buffer size is : %zd.\n", s);
     return s;
 }
+>>>>>>> c37b4a923ef561d9e2a11ee8b17a9c55b84ae5c9
