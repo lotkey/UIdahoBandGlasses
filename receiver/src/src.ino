@@ -14,7 +14,7 @@
 * 
 * Edited By Hayden Carroll
 * University of Idaho
-* 5/1/2022
+* 5/2/2022
 * 
 */
 
@@ -31,12 +31,18 @@ Mrf24j mrf(pin_reset, pin_cs, pin_interrupt);
 
 void setup() {
   DDRC = 0x00;
-  SoftPWMBegin();
-  SoftPWMSet(redPin, 0);
-  SoftPWMSet(greenPin, 0);
-  pinMode(bluePin, OUTPUT);
-  SoftPWMSetFadeTime(redPin, 10, 10);
-  SoftPWMSetFadeTime(greenPin, 10, 10);
+
+    pinMode(redPin, OUTPUT);   // sets the pin as output
+    pinMode(greenPin, OUTPUT);   // sets the pin as output
+    pinMode(bluePin, OUTPUT);   // sets the pin as output
+  
+//    SoftPWMBegin();
+//    SoftPWMSet(redPin, 0);
+//  SoftPWMSet(greenPin, 0);
+//  SoftPWMSet(bluePin, 0);
+//    SoftPWMSetFadeTime(redPin, 100, 1000);
+//  SoftPWMSetFadeTime(greenPin, 10, 10);
+//  SoftPWMSetFadeTime(bluePin, 10, 10);
   
   // The following pins are connected to the rotary or DIP switch that sets
   // the channel. They are all inputs, but we write to them to enable the
@@ -44,38 +50,22 @@ void setup() {
 
 
   Serial.begin(38400);
-
-  pinMode(A0, INPUT_PULLUP);
-  pinMode(A1, INPUT_PULLUP);
-  pinMode(A2, INPUT_PULLUP);
-  pinMode(A3, INPUT_PULLUP);
-  pinMode(A4, INPUT_PULLUP);
-  pinMode(A5, INPUT_PULLUP);
-  pinMode(A6, INPUT);
-  pinMode(A7, INPUT);
+  pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
+  pinMode(A2, INPUT);
+  pinMode(A3, INPUT);
+  pinMode(A4, INPUT);
+  pinMode(A5, INPUT);
+  pinMode(20, INPUT);
+  pinMode(21, INPUT);
   digitalWrite(A0,HIGH);
-  delay(500);
   digitalWrite(A1, HIGH);
-    delay(500);
-
   digitalWrite(A2, HIGH);
-    delay(500);
-
   digitalWrite(A3, HIGH);
-    delay(500);
-
   digitalWrite(A4,HIGH);
-    delay(500);
-
   digitalWrite(A5, HIGH);
-    delay(500);
-
-  digitalWrite(A6, LOW);
-    delay(500);
-
-  digitalWrite(A7, HIGH);
-    delay(500);
-
+  digitalWrite(20, HIGH);
+  digitalWrite(21, HIGH);
 
   setColor(0,0,0);
   
@@ -97,14 +87,15 @@ void setup() {
   startId = dipSwitch;
   Serial.println("\n The dipswitch value is: ");
   Serial.println(dipSwitch);
+  Serial.println("The bit values for the dipswitch are:");
   Serial.println(digitalRead(A0));
   Serial.println(digitalRead(A1));
   Serial.println(digitalRead(A2));
   Serial.println(digitalRead(A3));
   Serial.println(digitalRead(A4));
   Serial.println(digitalRead(A5));
-  Serial.println(digitalRead(A6));
-  Serial.println(digitalRead(A7));
+  Serial.println(digitalRead(20));
+  Serial.println(digitalRead(21));
 }
 
 void interrupt_routine()
@@ -121,12 +112,12 @@ void loop()
 void handle_rx()
 {
   rx_info_t* info = mrf.get_rxinfo();
+
   uint8_t encodedColor = info->rx_data[startId];
-  Serial.println(encodedColor);
   uint8_t red = 0;
   uint8_t blue = 0;
   uint8_t green = 0;
-  
+
   decodeColor(encodedColor, &red, &green, &blue);
   Serial.print(red);
   Serial.print(" ");
@@ -146,16 +137,19 @@ void handle_tx()
 
 void setColor(int red, int green, int blue)
 {
-  SoftPWMSet(redPin, red);
-  SoftPWMSet(greenPin, green);
-  analogWrite(bluePin, blue);
+//    SoftPWMSet(redPin, red);
+//  SoftPWMSet(greenPin, green);
+//  SoftPWMSet(bluePin, blue);
+    analogWrite(redPin, red); // reds intensity is way too high
+    analogWrite(greenPin, green);
+    analogWrite(bluePin, blue);
 }
 
 // takes in the encoded color, decodes it,
 // and changes the red, green, and blue values accordingly
 void decodeColor(uint8_t encodedColor, uint8_t* red, uint8_t* green, uint8_t* blue)
 {
-    *red = encodedColor & 0b00000011;
+    *blue = encodedColor & 0b00000011;
     encodedColor = encodedColor >> 2;
     *green = encodedColor & 0b00000111;
     encodedColor = encodedColor >> 3;
