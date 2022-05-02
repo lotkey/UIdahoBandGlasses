@@ -98,7 +98,7 @@ int main() {
         switch (letter) {
 
         case 'r':
-            sendFlash(ftdi, imageToSend, transmitter::colors::DarkRed, arrayToSend, arraySize);
+            sendFlash(ftdi, imageToSend, transmitter::colors::Red, arrayToSend, arraySize);
             break;
 
         case 'b':
