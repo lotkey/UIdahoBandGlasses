@@ -4,8 +4,6 @@
 #include "Matrix.hpp"
 #include "common/common.hpp"
 
-// #include <png.h>
-
 #include <functional>
 #include <vector>
 
@@ -25,6 +23,8 @@ class Image : public Matrix<common::Color> {
     Image invert() const;
     /// @returns The image recolored with the provided color
     Image recolor(const common::Color &) const;
+    /// @returns The image with the color changed.
+    Image changeColor(const common::Color &) const;
     /// @returns The image with no saturation
     Image grayscale() const;
     /// @param s The saturation [0.0-1.0]

@@ -3,8 +3,6 @@
 #include "Matrix.hpp"
 #include "common/common.hpp"
 
-// #include <png.h>
-
 #include <cinttypes>
 #include <iostream>
 #include <vector>
@@ -42,7 +40,14 @@ Image Image::invert() const {
 Image Image::recolor(const common::Color &hue) const {
     Image recolored = *this;
     recolored.apply(
-        [hue](common::Color &color) { color = hue; });
+        [hue](common::Color &color) { color = hue * color.intensity(); });
+    return recolored;
+}
+
+Image Image::changeColor(const common::Color &newColor) const {
+    Image recolored = *this;
+    recolored.apply(
+        [hue](common::Color &color) { color = newColor; });
     return recolored;
 }
 

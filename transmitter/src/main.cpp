@@ -49,12 +49,7 @@ int closeFTDIConnection(ftdi_context* ftdi);
 int sendFlash(ftdi_context* ftdi, transmitter::Image& image, 
                common::Color newColor, uint8_t* arrayToSend, int arraySize);
 int main() {
-    int x = 32; // num of people in X axis
-    int y = 3; // num of people in Y axis
-    int arraySize = x*y;
-    transmitter::Image imageToSend = transmitter::Image(x, y, transmitter::colors::Blank);
-    uint8_t* arrayToSend = new u_int8_t[arraySize];
-    bool wasSuccess = imageToSend.encode(arrayToSend, arraySize);
+    transmitter::Image imageToSend = transmitter::Image(16, 16, transmitter::colors::Blank);
 
     struct ftdi_context *ftdi; // ftdi context for transmitter we are using
     char letter;    // current letter user entered
@@ -98,19 +93,19 @@ int main() {
         switch (letter) {
 
         case 'r':
-            sendFlash(ftdi, imageToSend, transmitter::colors::Red, arrayToSend, arraySize);
+            sendFlash(ftdi, imageToSend, transmitter::colors::Red);
             break;
 
         case 'b':
-            sendFlash(ftdi, imageToSend, transmitter::colors::Blue, arrayToSend, arraySize);
+            sendFlash(ftdi, imageToSend, transmitter::colors::Blue);
             break;
         case 'g':
-            sendFlash(ftdi, imageToSend, transmitter::colors::Green, arrayToSend, arraySize);
+            sendFlash(ftdi, imageToSend, transmitter::colors::Green);
             break;
         default:
             usleep(DAB);
         }
-        nbytes = sendFlash(ftdi, imageToSend, transmitter::colors::Blank, arrayToSend, arraySize);
+        nbytes = sendFlash(ftdi, imageToSend, transmitter::colors::Blank);
         // Draw a space over current character
     } while (letter != '.');
 
@@ -119,7 +114,6 @@ int main() {
     }
 
     printf("End of program.\n");
-    delete[] arrayToSend;
 
     return EXIT_SUCCESS;
 }
@@ -206,11 +200,9 @@ int closeFTDIConnection(ftdi_context* ftdi) {
 
 int sendFlash(ftdi_context* ftdi, transmitter::Image& image, 
                common::Color newColor, uint8_t* arrayToSend, int arraySize) {
-    image = image.recolor(newColor);
+    image.changeColor(newColor);
     image.encode(arrayToSend, arraySize);
-    // printf("%d ", image.recolor(newColor).encode(arrayToSend, arraySize));
-    printf("%d ", arrayToSend[0]);
-    int nbytes = ftdi_write_data(ftdi, arrayToSend, arraySize);
+    int nbytes = ftdi_write_data(ftdi, image.encode());
     usleep(SLP);
 
     return nbytes;
