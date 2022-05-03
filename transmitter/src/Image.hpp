@@ -19,6 +19,7 @@ class Image : public Matrix<common::Color> {
     Image(int numrows, int numcols, const common::Color &fillColor = {});
     /// Construct an image from a 2D vector array
     Image(const std::vector<std::vector<common::Color>> &data);
+
     Image resize(int numRows, int numCols);
 
     /// @returns The image with every pixel inverted
@@ -37,12 +38,13 @@ class Image : public Matrix<common::Color> {
     Image blackAndWhite() const;
     Image compress() const;
     /// @returns A 2D vector of encoded colors
-    std::vector<uint8_t> encode() const;
+    [[nodiscard]] std::vector<uint8_t> encode() const;
+
+    Image applyToAll(const std::function<void(common::Color &)> &);
+    Image
+    applyToAll(const std::function<void(common::Color &, int x, int y)> &);
 
   protected:
     Image(const Matrix<common::Color> &);
-
-    /// Applies the function to all pixels
-    void apply(const std::function<void(common::Color &)> &);
 };
 } // namespace transmitter
