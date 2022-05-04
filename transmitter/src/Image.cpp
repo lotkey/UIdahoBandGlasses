@@ -95,7 +95,6 @@ std::vector<uint8_t> Image::encode() const {
     return encoded_img;
 }
 
-
 void Image::apply(const std::function<void(common::Color &)> &func) {
     for (int i = 0; i < numRows(); i++) {
         for (int j = 0; j < numCols(); j++) {
