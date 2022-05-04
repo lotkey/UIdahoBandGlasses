@@ -1,13 +1,14 @@
 // Chris McVickar
 #include "Color.hpp"
 
-#include <algorithm>
-#include <bitset>
-#include <iostream>
+// #include <algorithm>
+// #include <bitset>
+// #include <iostream>
 #include <math.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <string>
+// #include <string>
 
 namespace common {
 Color Color::random() { return {rand() % 256, rand() % 256, rand() % 256}; }
@@ -49,17 +50,20 @@ Color Color::decode(uint8_t encoded) {
     uint8_t r;
     uint8_t g;
     uint8_t b;
+    decode(encoded, r, g, b);
+    return Color(r, g, b);
+}
 
-    b = encoded & 0b00000011;
-    encoded = encoded >> 2;
-    g = encoded & 0b00000111;
-    encoded = encoded >> 3;
-    r = encoded & 0b00000111;
+void Color::decode(uint8_t encoded_color, uint8_t &r, uint8_t &g, uint8_t &b) {
+    b = encoded_color & 0b00000011;
+    encoded_color = encoded_color >> 2;
+    g = encoded_color & 0b00000111;
+    encoded_color = encoded_color >> 3;
+    r = encoded_color & 0b00000111;
 
     r = (r / 7.f) * 255;
     g = (g / 7.f) * 255;
     b = (b / 3.f) * 255;
-    return Color(r, g, b);
 }
 
 Color::Color() : m_r(0), m_g(0), m_b(0) {}
@@ -80,13 +84,6 @@ Color::Color(double d) {
     m_r = clip(d * 255);
     m_g = clip(d * 255);
     m_b = clip(d * 255);
-}
-
-std::string Color::toString() const {
-    std::string s = "(" + std::to_string((int)m_r) + ", " +
-                    std::to_string((int)m_g) + ", " + std::to_string((int)m_b) +
-                    ")";
-    return s;
 }
 
 double Color::intensity() const {
@@ -168,7 +165,8 @@ uint8_t &Color::operator[](int channel) {
     case 2:
         return m_b;
     default:
-        throw std::runtime_error("Color channel must be in the range [0-2]");
+        printf("Color index must be in the range [0-2].");
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -241,7 +239,3 @@ uint8_t Color::min() const { return std::min(m_r, std::min(m_g, m_b)); }
 
 uint8_t Color::delta() const { return max() - min(); }
 } // namespace common
-
-namespace std {
-std::string to_string(const common::Color &color) { return color.toString(); }
-} // namespace std

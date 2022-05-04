@@ -2,7 +2,6 @@
 #pragma once
 
 #include <stdint.h>
-#include <string>
 
 namespace common {
 class Color {
@@ -15,6 +14,12 @@ class Color {
     static Color fromHSV(double h, double s, double v);
     /// @returns A color from an encoded 8-bit color
     static Color decode(uint8_t);
+    /// @param encoded_color Color encoded to 8bit integer (RRRGGGBB)
+    /// @param r Reference to 8bit integer to write the R value into
+    /// @param g Reference to 8bit integer to write the G value into
+    /// @param b Reference to 8bit integer to write the B value into
+    static void decode(uint8_t encoded_color, uint8_t &r, uint8_t &g,
+                       uint8_t &b);
 
     Color();
     /// Construct from RGB values
@@ -24,8 +29,6 @@ class Color {
     /// Constructs from brightness [0.0 - 1.0]
     Color(double d);
 
-    /// Convert to string for printing and debugging
-    std::string toString() const;
     /// @returns Brightness of the color on a scale of [0.0-1.0]
     double intensity() const;
     /// @returns An 8-bit integer to represent a color
@@ -109,7 +112,3 @@ class Color {
     uint8_t delta() const;
 };
 } // namespace common
-
-namespace std {
-std::string to_string(const common::Color &color);
-}

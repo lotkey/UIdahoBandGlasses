@@ -1,6 +1,7 @@
 // Chris McVickar
 #pragma once
 
+#include <functional>
 #include <iostream>
 #include <math.h>
 #include <tuple>
@@ -64,6 +65,9 @@ template <typename T> class Matrix {
     void moveTo(Matrix &);
     void allocateMemory();
     void freeMemory();
+
+    void apply(const std::function<void(T &)> &);
+    void apply(const std::function<void(T &, int, int)> &);
 };
 
 template <typename T> Matrix<T>::Matrix() {}
@@ -233,12 +237,31 @@ template <typename T> void Matrix<T>::copyTo(Matrix<T> &m) const {
 }
 
 template <typename T> void Matrix<T>::moveTo(Matrix<T> &m) {
-    m.m_data = m_data;
-    m.m_numcols = m_numcols;
-    m.m_numrows = m_numrows;
+    m.freeMemory();
+    m.m_data = std::move(m_data);
+    m.m_numcols = std::move(m_numcols);
+    m.m_numrows = std::move(m_numrows);
 
     m_data = nullptr;
     m_numcols = 0;
     m_numrows = 0;
+}
+
+template <typename T>
+void Matrix<T>::apply(const std::function<void(T &)> &modifier) {
+    for (int i = 0; i < m_numrows; i++) {
+        for (int j = 0; j < m_numcols; j++) {
+            modifier(m_data[i][j]);
+        }
+    }
+}
+
+template <typename T>
+void Matrix<T>::apply(const std::function<void(T &, int, int)> &modifier) {
+    for (int i = 0; i < m_numrows; i++) {
+        for (int j = 0; j < m_numcols; j++) {
+            modifier(m_data[i][j], i, j);
+        }
+    }
 }
 } // namespace transmitter

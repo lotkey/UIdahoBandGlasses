@@ -70,6 +70,15 @@ int closeFTDIConnection(ftdi_context *ftdi);
 int sendFlash(ftdi_context *ftdi, transmitter::Image &image, int imageX,
               int imageY, const common::Color &newColor);
 int main() {
+    //srand(time(NULL));
+    //transmitter::BMP bmp("../imgs/test.bmp");
+    //auto img = bmp.toImage().compress();
+    //transmitter::Image image = bmp.toImage();
+    //bmp = transmitter::BMP(img);
+    //transmitter::Image img2(1, 1);
+    //img2 = transmitter::Image(1, 1, {255, 255, 255});
+    //bmp.save("../imgs/output.bmp");
+
     int imageX = 16;
     int imageY = 16;
     transmitter::Image imageToSend =
