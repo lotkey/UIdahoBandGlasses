@@ -23,8 +23,10 @@ int greenPin = 4;  // green pin location
 int bluePin = 5;   // blue pin location
 int pin_reset = 6;
 int pin_cs = 8;
+int dip8_pin = 10;
+int dip7_pin = 9;
 int pin_interrupt = 2;
-int dipSwitch;     // value of the dipswitch for the board
+unsigned int dipSwitch = 0;     // value of the dipswitch for the board
 int startId;       // value of where in the packet to read from (currently should equal dipswitch, unless we add header info, we would offset it)
 
 Mrf24j mrf(pin_reset, pin_cs, pin_interrupt);
@@ -50,22 +52,6 @@ void setup() {
 
 
   Serial.begin(38400);
-  pinMode(A0, INPUT);
-  pinMode(A1, INPUT);
-  pinMode(A2, INPUT);
-  pinMode(A3, INPUT);
-  pinMode(A4, INPUT);
-  pinMode(A5, INPUT);
-  pinMode(20, INPUT);
-  pinMode(21, INPUT);
-  digitalWrite(A0,HIGH);
-  digitalWrite(A1, HIGH);
-  digitalWrite(A2, HIGH);
-  digitalWrite(A3, HIGH);
-  digitalWrite(A4,HIGH);
-  digitalWrite(A5, HIGH);
-  digitalWrite(20, HIGH);
-  digitalWrite(21, HIGH);
 
   setColor(0,0,0);
   
@@ -79,23 +65,24 @@ void setup() {
   
   attachInterrupt(0, interrupt_routine, CHANGE);
   interrupts();
+  pinMode(A0, INPUT_PULLUP);
+  pinMode(A1, INPUT_PULLUP);
+  pinMode(A2, INPUT_PULLUP);
+  pinMode(A3, INPUT_PULLUP);
+  pinMode(A4, INPUT_PULLUP);
+  pinMode(A5, INPUT_PULLUP);
+  pinMode(dip7_pin, INPUT_PULLUP);
+  pinMode(dip8_pin, INPUT_PULLUP);
 
-  // ERROR HERE!!!! For some reason, the last 2 dip switches are not being found, so I am not using them. It really should be ~PINC & 0xff; 
-  // also, where are A0-A7 defined? That could be the problem. Also, where is PINC defined?
-  dipSwitch = ~PINC & 0x3f;   
+  dipSwitch = (digitalRead(dip8_pin)) << 7; // get 8th dip switch bit, shift it to 8th pos
+  dipSwitch = dipSwitch | (digitalRead(dip7_pin) << 6); // get 7th dip switch bit, shift it to 7th pos
+  dipSwitch = (dipSwitch | (PINC & 0x3F)); // get 1-6th dip switch bit
+  dipSwitch = ~dipSwitch & 0xFF;
   
   startId = dipSwitch;
   Serial.println("\n The dipswitch value is: ");
   Serial.println(dipSwitch);
-  Serial.println("The bit values for the dipswitch are:");
-  Serial.println(digitalRead(A0));
-  Serial.println(digitalRead(A1));
-  Serial.println(digitalRead(A2));
-  Serial.println(digitalRead(A3));
-  Serial.println(digitalRead(A4));
-  Serial.println(digitalRead(A5));
-  Serial.println(digitalRead(20));
-  Serial.println(digitalRead(21));
+
 }
 
 void interrupt_routine()
