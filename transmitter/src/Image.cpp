@@ -44,13 +44,6 @@ Image Image::recolor(const common::Color &hue) const {
     return recolored;
 }
 
-Image Image::changeColor(const common::Color &newColor) const {
-    Image recolored = *this;
-    recolored.apply(
-        [hue](common::Color &color) { color = newColor; });
-    return recolored;
-}
-
 Image Image::grayscale() const {
     Image gray = *this;
     gray.apply([](common::Color &color) { color = color.grayscale(); });
@@ -100,20 +93,6 @@ std::vector<uint8_t> Image::encode() const {
         }
     }
     return encoded_img;
-}
-
-bool Image::encode(uint8_t array[], int n) const {
-    int numRow = numRows();
-    int numCol = numCols();
-    if (n != numRow*numCol || n <= 0) {
-        return false;
-    }
-    for (int i=0; i < numRow; i++) {
-        for (int j=0; j < numCol; j++) {
-            array[i * numCol + j] = m_data[i][j].encode();
-        }
-    }
-    return true;
 }
 
 

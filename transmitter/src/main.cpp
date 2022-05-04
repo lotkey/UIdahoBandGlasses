@@ -39,17 +39,39 @@
 #define DAB 50000
 #define SLP 40000
 
-// static size_t encode(const uint8_t* source, size_t size, uint8_t*
-// destination);
-static size_t getEncodedBufferSize(size_t sourceSize);
-uint8_t* getEncodedArrayFromImage(const transmitter::Image& image);
-bool initializeFTDI(ftdi_context* ftdi);
+/**
+ * Sets up the FTDI connection, given that the FTDI ptr is initialized already.
+ * 
+ * @param ftdi ftdi context ptr used throughout program
+ * @return int 0 if success, else error from fdi calls
+ */
 int setupFTDIConnection(ftdi_context* ftdi);
+
+/**
+ * Closes the FTDI connection
+ * 
+ * @param ftdi ftdi context ptr used throughout program
+ * @return int 0 if success, else error from ftdi calls
+ */
 int closeFTDIConnection(ftdi_context* ftdi);
+
+
+/**
+ * Sends a flash of color to the ftdi device
+ * 
+ * @param ftdi ftdi context used throughout program
+ * @param image const ref to image used throughout program
+ * @param imageX num of pixels in X axis of img (wouldnt be needed if image had getter for this)
+ * @param imageY num of pixels in Y axis of img (wouldnt be needed if image had getter for this)
+ * @param newColor const ref to the color to send
+ * @return int newColor const ref to the color to send
+ */
 int sendFlash(ftdi_context* ftdi, transmitter::Image& image, 
-               common::Color newColor, uint8_t* arrayToSend, int arraySize);
+              int imageX, int imageY, const common::Color& newColor);
 int main() {
-    transmitter::Image imageToSend = transmitter::Image(16, 16, transmitter::colors::Blank);
+    int imageX = 16;
+    int imageY = 16;
+    transmitter::Image imageToSend = transmitter::Image(imageX, imageY, transmitter::colors::Blank);
 
     struct ftdi_context *ftdi; // ftdi context for transmitter we are using
     char letter;    // current letter user entered
@@ -93,19 +115,19 @@ int main() {
         switch (letter) {
 
         case 'r':
-            sendFlash(ftdi, imageToSend, transmitter::colors::Red);
+            sendFlash(ftdi, imageToSend, imageX, imageY, transmitter::colors::Red);
             break;
 
         case 'b':
-            sendFlash(ftdi, imageToSend, transmitter::colors::Blue);
+            sendFlash(ftdi, imageToSend, imageX, imageY, transmitter::colors::Blue);
             break;
         case 'g':
-            sendFlash(ftdi, imageToSend, transmitter::colors::Green);
+            sendFlash(ftdi, imageToSend, imageX, imageY, transmitter::colors::Green);
             break;
         default:
             usleep(DAB);
         }
-        nbytes = sendFlash(ftdi, imageToSend, transmitter::colors::Blank);
+        nbytes = sendFlash(ftdi, imageToSend, imageX, imageY, transmitter::colors::Blank);
         // Draw a space over current character
     } while (letter != '.');
 
@@ -117,6 +139,7 @@ int main() {
 
     return EXIT_SUCCESS;
 }
+
 
 int setupFTDIConnection(ftdi_context* ftdi) {
     int numDevicesFound = 0; // number of FTDI devices found on the machine
@@ -187,6 +210,7 @@ int setupFTDIConnection(ftdi_context* ftdi) {
     return 0;
 }
 
+
 int closeFTDIConnection(ftdi_context* ftdi) {
     // close ftdi device connection
     int errors; // errors from ftdi function calls
@@ -198,13 +222,16 @@ int closeFTDIConnection(ftdi_context* ftdi) {
     return errors;
 }
 
+
 int sendFlash(ftdi_context* ftdi, transmitter::Image& image, 
-               common::Color newColor, uint8_t* arrayToSend, int arraySize) {
-    image.changeColor(newColor);
-    image.encode(arrayToSend, arraySize);
-    int nbytes = ftdi_write_data(ftdi, image.encode());
+              int imageX, int imageY, const common::Color& newColor) {
+
+    image = transmitter::Image(imageX, imageY, newColor);
+    std::vector<uint8_t> encodedVector = image.encode();
+    int encodedVectorSize = encodedVector.size();
+
+    int nbytes = ftdi_write_data(ftdi, encodedVector.data(), encodedVectorSize);
     usleep(SLP);
 
     return nbytes;
 }
-
