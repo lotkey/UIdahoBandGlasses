@@ -3,8 +3,6 @@
 #include "Matrix.hpp"
 #include "common/common.hpp"
 
-#include <png.h>
-
 #include <cinttypes>
 #include <iostream>
 #include <vector>
