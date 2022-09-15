@@ -13,6 +13,25 @@
 namespace transmitter {
 class BMP {
 public:
+  // Construct a BMP from the provided path to a .bmp file
+  BMP(std::filesystem::path const& img_path);
+  // Construct a BMP from an Image
+  BMP(Image const& img);
+  // Convert to an Image
+  Image toImage() const;
+  // Save to the provided .bmp path
+  void save(std::filesystem::path const& img_path) const;
+
+  // Set the pixel at row, col to the provided color
+  void set(int row, int col, common::Color const&);
+  // Returns the color at row, col
+  common::Color at(int row, int col) const;
+  // Returns the color at row, col, channel
+  uint8_t at(int row, int col, int channel) const;
+  // Returns a reference to the color at row, col, channel
+  uint8_t& at(int row, int col, int channel);
+
+private:
 #pragma pack(push, 1)
   struct FileHeader {
     uint16_t file_type = 0x4D42; // File type always BM which is 0x4D42
@@ -57,25 +76,6 @@ public:
   };
 #pragma pack(pop)
 
-  // Construct a BMP from the provided path to a .bmp file
-  BMP(std::filesystem::path const& img_path);
-  // Construct a BMP from an Image
-  BMP(Image const& img);
-  // Convert to an Image
-  Image toImage() const;
-  // Save to the provided .bmp path
-  void save(std::filesystem::path const& img_path) const;
-
-  // Set the pixel at row, col to the provided color
-  void set(int row, int col, common::Color const&);
-  // Returns the color at row, col
-  common::Color at(int row, int col) const;
-  // Returns the color at row, col, channel
-  uint8_t at(int row, int col, int channel) const;
-  // Returns a reference to the color at row, col, channel
-  uint8_t& at(int row, int col, int channel);
-
-private:
   FileHeader m_fileHeader;
   InfoHeader m_infoHeader;
   ColorHeader m_colorHeader;

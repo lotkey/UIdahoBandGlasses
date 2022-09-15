@@ -165,7 +165,6 @@ int setupFTDIConnection(ftdi_context* ftdi)
       0) {
     fprintf(stderr, "no ftdi devices found\n");
     fflush(stderr);
-    ftdi_list_free(&devlist);
     ftdi_free(ftdi);
     return 1;
   } else {

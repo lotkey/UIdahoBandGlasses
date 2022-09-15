@@ -73,7 +73,7 @@ Team members should be able to read your code and generally understand it. Some 
 - Expanding on the above guideline, there should be 3 types of includes: files in this project, third-party libraries, and built-in libraries. They should be included in that order (and separated).
 - Use descriptive variable/function/class names. This means full words, unless there is a standard or popular abbreviation (img, mph, kB, etc.). 
 - Try to keep functions small. If you have a very large function, break it up into multiple if you can.
-- Comments. Every function prototype should have a comment unless it's very obvious what the function does ("int max(int, int)" for example). Class declarations should be commented and show what purpose the class serves (not just what it is).
+- Comments. Every function prototype should have a comment unless it's very obvious what the function does ("int max(int, int)" for example). Nobody should have to read the implementation to understand the code. Class declarations should be commented and show what purpose the class serves (not just what it is).
 - Classes start with capital letters. Variable names can be camel-case or have underscores. Small variable names may not need either (numrows vs numRows vs num_rows).
 - Classes should be split into a header file and source file(s), except for smaller classes.
 - Static non-public class member variables should have the "s_" prefix.
@@ -88,11 +88,13 @@ Pointer membership is important. If a pointer is an "owning pointer", then it ow
 - Use smart pointers whenever a pointer is needed (unique_ptrs preferably, shared_ptrs only when necessary). Smart pointers automatically free memory when they are destructed.
 - If a raw pointer is necessary (deleted move/copy constructors or assignment or something), be sure to document it with comments. Comment whether or not it is an owning pointer and is responsible for cleaning up the memory when done, or if it is a non-owning pointer and the class is not responsible for freeing the memory.
 - If you are using raw pointers in a class, carefully define a destructor (if the class is responsible for freeing the memory) and a copy constructor (if you want a deep copy vs. a shallow copy).
+- If you define a destructor, define it as virtual. This ensures that the right destructor is called when an object is virtually bound.
 
 ### References and Const-ness
 
 Passing objects by reference can increase performance (passing a reference instead of copying an object and passing the copy).
 - Pass object arguments by reference whenever possible.
 - If the object must not be changed, pass it by a const reference.
+- Primitives do not need to be passed by reference (int, bool, etc.). There is likely no performance gain, and the compiler will probably optimize it away anyways.
 - There are some cases in which it would be easier or make more sense to pass a modifiable copy. Document it, if needed.
 - Declare all class functions that do not modify a class's data as const (this is so that the functions can be used with a const object or reference).
