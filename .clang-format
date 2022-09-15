@@ -51,7 +51,7 @@ FixNamespaceComments: true
 IncludeBlocks: Preserve
 IndentCaseLabels: true
 IndentPPDirectives: AfterHash
-IndentWidth: 4
+IndentWidth: 2
 IndentWrappedFunctionNames: false
 KeepEmptyLinesAtTheStartOfBlocks: false
 MaxEmptyLinesToKeep: 1

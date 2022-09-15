@@ -13,22 +13,22 @@ namespace transmitter {
 /// This will include fonts and symbols that can be colored or used to mask
 /// images (smiley faces, shapes, etc.)
 class Mask : public Matrix<double> {
-  public:
-    /// Constructs from image
-    Mask(Image const &);
-    /// Constructs from size
-    Mask(int numrows, int numcols);
+public:
+  /// Constructs from image
+  Mask(Image const&);
+  /// Constructs from size
+  Mask(int numrows, int numcols);
 
-    /// Inverts mask
-    Mask invert() const;
-    /// Returns masked image
-    Image maskImage(Image) const;
-    /// Returns the mask as an image with optional foreground and background
-    /// colors
-    Image toImage(common::Color const &fg_color = colors::White,
-                  common::Color const &bg_color = colors::Blank);
+  /// Inverts mask
+  Mask invert() const;
+  /// Returns masked image
+  Image maskImage(Image) const;
+  /// Returns the mask as an image with optional foreground and background
+  /// colors
+  Image toImage(common::Color const& fg_color = colors::White,
+                common::Color const& bg_color = colors::Blank);
 
-  protected:
-    Mask(Matrix<double> const &);
+protected:
+  Mask(Matrix<double> const&);
 };
 } // namespace transmitter
