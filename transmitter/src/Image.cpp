@@ -8,64 +8,75 @@
 #include <vector>
 
 namespace transmitter {
-Image Image::noise(int numrows, int numcols) {
+Image Image::noise(int numrows, int numcols)
+{
     Image img(numrows, numcols);
-    img.apply([](common::Color &color) { color = common::Color::random(); });
+    img.apply([](common::Color& color) { color = common::Color::random(); });
     return img;
 }
 
-Image::Image(int numrows, int numcols, common::Color const &fillColor)
-    : Matrix<common::Color>(numrows, numcols) {
-    apply([fillColor](common::Color &color) { color = fillColor; });
+Image::Image(int numrows, int numcols, common::Color const& fillColor) :
+    Matrix<common::Color>(numrows, numcols)
+{
+    apply([fillColor](common::Color& color) { color = fillColor; });
 }
 
-Image::Image(std::vector<std::vector<common::Color>> const &data)
-    : Matrix<common::Color>(data) {}
+Image::Image(std::vector<std::vector<common::Color>> const& data) :
+    Matrix<common::Color>(data)
+{}
 
-Image Image::resize(int numRows, int numCols) {
+Image Image::resize(int numRows, int numCols)
+{
     return Image(Matrix<common::Color>::resize(numRows, numCols));
 }
 
-Image::Image(Matrix<common::Color> const &matrix)
-    : Matrix<common::Color>(matrix) {}
+Image::Image(Matrix<common::Color> const& matrix) :
+    Matrix<common::Color>(matrix)
+{}
 
-Image Image::invert() const {
+Image Image::invert() const
+{
     Image inverted = *this;
-    inverted.apply([](common::Color &color) {
+    inverted.apply([](common::Color& color) {
         color = common::Color(255, 255, 255) - color;
     });
     return inverted;
 }
 
-Image Image::recolor(common::Color const &hue) const {
+Image Image::recolor(common::Color const& hue) const
+{
     Image recolored = *this;
     recolored.apply(
-        [hue](common::Color &color) { color = hue * color.intensity(); });
+      [hue](common::Color& color) { color = hue * color.intensity(); });
     return recolored;
 }
 
-Image Image::grayscale() const {
+Image Image::grayscale() const
+{
     Image gray = *this;
-    gray.apply([](common::Color &color) { color = color.grayscale(); });
+    gray.apply([](common::Color& color) { color = color.grayscale(); });
     return gray;
 }
 
-Image Image::saturate(double s) const {
+Image Image::saturate(double s) const
+{
     Image saturated = *this;
     saturated.apply(
-        [s](common::Color &color) { color = color.withSaturation(s); });
+      [s](common::Color& color) { color = color.withSaturation(s); });
     return saturated;
 }
 
-Image Image::hue(double h) const {
+Image Image::hue(double h) const
+{
     Image hued = *this;
-    hued.apply([h](common::Color &color) { color = color.withHue(h); });
+    hued.apply([h](common::Color& color) { color = color.withHue(h); });
     return hued;
 }
 
-Image Image::blackAndWhite() const {
+Image Image::blackAndWhite() const
+{
     Image bw = *this;
-    bw.apply([](common::Color &color) {
+    bw.apply([](common::Color& color) {
         float brightness = color.intensity();
         if (brightness > .5) {
             color = {255, 255, 255};
@@ -76,15 +87,17 @@ Image Image::blackAndWhite() const {
     return bw;
 }
 
-Image Image::compress() const {
+Image Image::compress() const
+{
     Image compressed = *this;
-    compressed.apply([](common::Color &color) {
+    compressed.apply([](common::Color& color) {
         color = common::Color::decode(color.encode());
     });
     return compressed;
 }
 
-std::vector<uint8_t> Image::encode() const {
+std::vector<uint8_t> Image::encode() const
+{
     std::vector<uint8_t> encoded_img;
 
     for (int i = 0; i < numRows(); i++) {
@@ -95,14 +108,16 @@ std::vector<uint8_t> Image::encode() const {
     return encoded_img;
 }
 
-Image Image::applyToAll(std::function<void(common::Color &)> const &modifier) {
+Image Image::applyToAll(std::function<void(common::Color&)> const& modifier)
+{
     Image modified = *this;
     modified.apply(modifier);
     return modified;
 }
 
 Image Image::applyToAll(
-    std::function<void(common::Color &, int x, int y)> const &modifier) {
+  std::function<void(common::Color&, int x, int y)> const& modifier)
+{
     Image modified = *this;
     modified.apply(modifier);
     return modified;
