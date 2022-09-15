@@ -5,14 +5,8 @@ function run_no_output() {
 }
 
 echo "Installing requirements..."
-run_no_output "apt install make cmake g++ clang-format git code"
+run_no_output "sudo apt install make cmake g++ clang-format git code"
 echo "Requirements installed."
-echo ""
-
-echo "Making symlinks..."
-run_no_output "ln -s \"$(pwd)\"/common \"$(pwd)\"/receiver/src/common"
-run_no_output "ln -s \"$(pwd)\"/common \"$(pwd)\"/transmitter/src/common"
-echo "Made symlinks."
 echo ""
 
 echo "Creating build directory for transmitter..."

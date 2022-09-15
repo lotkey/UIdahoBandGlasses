@@ -2,9 +2,7 @@
 #pragma once
 
 #include "Matrix.hpp"
-#include "common/common.hpp"
-
-#include <png.h>
+#include "common.hpp"
 
 #include <functional>
 #include <vector>
@@ -16,16 +14,16 @@ class Image : public Matrix<common::Color> {
     static Image noise(int numrows, int numcols);
 
     /// Construct an image from a given size and an optional fill color
-    Image(int numrows, int numcols, const common::Color &fillColor = {});
+    Image(int numrows, int numcols, common::Color const &fillColor = {});
     /// Construct an image from a 2D vector array
-    Image(const std::vector<std::vector<common::Color>> &data);
+    Image(std::vector<std::vector<common::Color>> const &data);
 
     Image resize(int numRows, int numCols);
 
     /// @returns The image with every pixel inverted
     Image invert() const;
     /// @returns The image recolored with the provided color
-    Image recolor(const common::Color &) const;
+    Image recolor(common::Color const &) const;
     /// @returns The image with no saturation
     Image grayscale() const;
     /// @param s The saturation [0.0-1.0]
@@ -40,11 +38,11 @@ class Image : public Matrix<common::Color> {
     /// @returns A 2D vector of encoded colors
     [[nodiscard]] std::vector<uint8_t> encode() const;
 
-    Image applyToAll(const std::function<void(common::Color &)> &);
+    Image applyToAll(std::function<void(common::Color &)> const &);
     Image
-    applyToAll(const std::function<void(common::Color &, int x, int y)> &);
+    applyToAll(std::function<void(common::Color &, int x, int y)> const &);
 
   protected:
-    Image(const Matrix<common::Color> &);
+    Image(Matrix<common::Color> const &);
 };
 } // namespace transmitter

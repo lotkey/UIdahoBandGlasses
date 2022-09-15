@@ -1,7 +1,7 @@
 // Chris McVickar
 #include "BMP.hpp"
 #include "Image.hpp"
-#include "common/common.hpp"
+#include "common.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -11,9 +11,9 @@
 #include <vector>
 
 namespace transmitter {
-BMP::BMP(const std::filesystem::path &img_path) { load(img_path); }
+BMP::BMP(std::filesystem::path const &img_path) { load(img_path); }
 
-void BMP::load(const std::filesystem::path &img_path) {
+void BMP::load(std::filesystem::path const &img_path) {
     std::ifstream infile(img_path, std::ios_base::binary);
     if (infile) {
         infile.read((char *)&m_fileHeader, sizeof(m_fileHeader));
@@ -87,7 +87,7 @@ void BMP::load(const std::filesystem::path &img_path) {
     }
 }
 
-BMP::BMP(const Image &img) {
+BMP::BMP(Image const &img) {
     m_infoHeader.width = img.numCols();
     m_infoHeader.height = img.numRows();
     m_infoHeader.size = sizeof(InfoHeader);
@@ -121,7 +121,7 @@ Image BMP::toImage() const {
     return img;
 }
 
-void BMP::save(const std::filesystem::path &img_path) const {
+void BMP::save(std::filesystem::path const &img_path) const {
     std::ofstream outfile(img_path, std::ios_base::binary);
     if (outfile) {
         if (m_infoHeader.bit_count == 32) {
@@ -139,9 +139,9 @@ void BMP::save(const std::filesystem::path &img_path) const {
 
                 for (int y = 0; y < m_infoHeader.height; ++y) {
                     outfile.write(
-                        (const char *)(m_data.data() + m_rowStride * y),
+                        (char const *)(m_data.data() + m_rowStride * y),
                         m_rowStride);
-                    outfile.write((const char *)padding_row.data(),
+                    outfile.write((char const *)padding_row.data(),
                                   padding_row.size());
                 }
             }
@@ -154,7 +154,7 @@ void BMP::save(const std::filesystem::path &img_path) const {
     }
 }
 
-void BMP::set(int row, int col, const common::Color &color) {
+void BMP::set(int row, int col, common::Color const &color) {
     row = (m_infoHeader.height - 1) - row;
 
     uint32_t channels = m_infoHeader.bit_count / 8;
@@ -190,15 +190,15 @@ uint8_t &BMP::at(int row, int col, int channel) {
 }
 
 void BMP::writeHeaders(std::ofstream &outfile) const {
-    outfile.write((const char *)&m_fileHeader, sizeof(m_fileHeader));
-    outfile.write((const char *)&m_infoHeader, sizeof(m_infoHeader));
+    outfile.write((char const *)&m_fileHeader, sizeof(m_fileHeader));
+    outfile.write((char const *)&m_infoHeader, sizeof(m_infoHeader));
     if (m_infoHeader.bit_count == 32) {
-        outfile.write((const char *)&m_colorHeader, sizeof(m_colorHeader));
+        outfile.write((char const *)&m_colorHeader, sizeof(m_colorHeader));
     }
 }
 
 void BMP::writeData(std::ofstream &outfile) const {
-    outfile.write((const char *)m_data.data(), m_data.size());
+    outfile.write((char const *)m_data.data(), m_data.size());
 }
 
 // Add 1 to the m_rowStride until it is divisible with align_stride

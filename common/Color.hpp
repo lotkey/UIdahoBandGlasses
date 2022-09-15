@@ -57,7 +57,7 @@ class Color {
     uint8_t &operator[](int);
 
     /// @returns Difference between two colors by RGB values
-    double difference(const Color &) const;
+    double difference(Color const &) const;
     /// @returns Converted color to grayscale
     Color grayscale() const;
     /// @returns Inverted color
@@ -77,9 +77,9 @@ class Color {
     /// intensity.
     Color operator/(int scalar) const;
     /// @returns Color with summed RGB values
-    Color operator+(const Color &) const;
+    Color operator+(Color const &) const;
     /// @returns Color with subtracted RGB values
-    Color operator-(const Color &) const;
+    Color operator-(Color const &) const;
     /// Multiples the color by the scalar
     void operator*=(double scalar);
     /// Multiples the color by the scalar
@@ -89,9 +89,9 @@ class Color {
     /// Divides the color by the scalar
     void operator/=(int scalar);
     /// Adds the provided color to this color
-    void operator+=(const Color &);
+    void operator+=(Color const &);
     /// Subtracts the provided color from this color
-    void operator-=(const Color &);
+    void operator-=(Color const &);
 #pragma endregion
 
   private:

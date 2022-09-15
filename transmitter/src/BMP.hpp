@@ -1,7 +1,7 @@
 // Chris McVickar
 #pragma once
 #include "Image.hpp"
-#include "common/common.hpp"
+#include "common.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -60,16 +60,16 @@ class BMP {
 #pragma pack(pop)
 
     // Construct a BMP from the provided path to a .bmp file
-    BMP(const std::filesystem::path &img_path);
+    BMP(std::filesystem::path const &img_path);
     // Construct a BMP from an Image
-    BMP(const Image &img);
+    BMP(Image const &img);
     // Convert to an Image
     Image toImage() const;
     // Save to the provided .bmp path
-    void save(const std::filesystem::path &img_path) const;
+    void save(std::filesystem::path const &img_path) const;
 
     // Set the pixel at row, col to the provided color
-    void set(int row, int col, const common::Color &);
+    void set(int row, int col, common::Color const &);
     // Returns the color at row, col
     common::Color at(int row, int col) const;
     // Returns the color at row, col, channel
@@ -84,7 +84,7 @@ class BMP {
     uint32_t m_rowStride = 0;
     std::vector<uint8_t> m_data;
 
-    void load(const std::filesystem::path &);
+    void load(std::filesystem::path const &);
     void writeHeaders(std::ofstream &outfile) const;
     void writeData(std::ofstream &outfile) const;
     uint32_t makeStrideAligned(uint32_t align_stride) const;

@@ -170,7 +170,7 @@ uint8_t &Color::operator[](int channel) {
     }
 }
 
-double Color::difference(const Color &color) const {
+double Color::difference(Color const &color) const {
     double diffr = abs(m_r - color.getR());
     double diffg = abs(m_g - color.getG());
     double diffb = abs(m_b - color.getB());
@@ -202,11 +202,11 @@ Color Color::operator/(int scalar) const {
     return {m_r / scalar, m_g / scalar, m_b / scalar};
 }
 
-Color Color::operator+(const Color &color) const {
+Color Color::operator+(Color const &color) const {
     return {m_r + color.getR(), m_g + color.getG(), m_b + color.getB()};
 }
 
-Color Color::operator-(const Color &color) const {
+Color Color::operator-(Color const &color) const {
     return {m_r - color.getR(), m_g - color.getG(), m_b - color.getB()};
 }
 
@@ -218,9 +218,9 @@ void Color::operator/=(double scalar) { (*this) = *this / scalar; }
 
 void Color::operator/=(int scalar) { (*this) = *this / scalar; }
 
-void Color::operator+=(const Color &color) { (*this) = *this + color; }
+void Color::operator+=(Color const &color) { (*this) = *this + color; }
 
-void Color::operator-=(const Color &color) { (*this) = *this - color; }
+void Color::operator-=(Color const &color) { (*this) = *this - color; }
 #pragma endregion
 
 uint8_t Color::clip(double f) {

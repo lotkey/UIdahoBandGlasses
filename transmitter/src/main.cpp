@@ -1,10 +1,10 @@
 #include "BMP.hpp"
 #include "Mask.hpp"
 #include "colors.hpp"
-#include "common/common.hpp"
+#include "common.hpp"
 
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 
 int main() {
     srand(time(NULL));

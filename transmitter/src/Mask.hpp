@@ -4,7 +4,7 @@
 #include "Image.hpp"
 #include "Matrix.hpp"
 #include "colors.hpp"
-#include "common/common.hpp"
+#include "common.hpp"
 
 #include <tuple>
 #include <vector>
@@ -15,7 +15,7 @@ namespace transmitter {
 class Mask : public Matrix<double> {
   public:
     /// Constructs from image
-    Mask(const Image &);
+    Mask(Image const &);
     /// Constructs from size
     Mask(int numrows, int numcols);
 
@@ -25,10 +25,10 @@ class Mask : public Matrix<double> {
     Image maskImage(Image) const;
     /// Returns the mask as an image with optional foreground and background
     /// colors
-    Image toImage(const common::Color &fg_color = colors::White,
-                  const common::Color &bg_color = colors::Blank);
+    Image toImage(common::Color const &fg_color = colors::White,
+                  common::Color const &bg_color = colors::Blank);
 
   protected:
-    Mask(const Matrix<double> &);
+    Mask(Matrix<double> const &);
 };
 } // namespace transmitter

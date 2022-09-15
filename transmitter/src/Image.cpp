@@ -1,9 +1,7 @@
 // Chris McVickar
 #include "Image.hpp"
 #include "Matrix.hpp"
-#include "common/common.hpp"
-
-#include <png.h>
+#include "common.hpp"
 
 #include <cinttypes>
 #include <iostream>
@@ -16,19 +14,19 @@ Image Image::noise(int numrows, int numcols) {
     return img;
 }
 
-Image::Image(int numrows, int numcols, const common::Color &fillColor)
+Image::Image(int numrows, int numcols, common::Color const &fillColor)
     : Matrix<common::Color>(numrows, numcols) {
     apply([fillColor](common::Color &color) { color = fillColor; });
 }
 
-Image::Image(const std::vector<std::vector<common::Color>> &data)
+Image::Image(std::vector<std::vector<common::Color>> const &data)
     : Matrix<common::Color>(data) {}
 
 Image Image::resize(int numRows, int numCols) {
     return Image(Matrix<common::Color>::resize(numRows, numCols));
 }
 
-Image::Image(const Matrix<common::Color> &matrix)
+Image::Image(Matrix<common::Color> const &matrix)
     : Matrix<common::Color>(matrix) {}
 
 Image Image::invert() const {
@@ -39,7 +37,7 @@ Image Image::invert() const {
     return inverted;
 }
 
-Image Image::recolor(const common::Color &hue) const {
+Image Image::recolor(common::Color const &hue) const {
     Image recolored = *this;
     recolored.apply(
         [hue](common::Color &color) { color = hue * color.intensity(); });
@@ -97,14 +95,14 @@ std::vector<uint8_t> Image::encode() const {
     return encoded_img;
 }
 
-Image Image::applyToAll(const std::function<void(common::Color &)> &modifier) {
+Image Image::applyToAll(std::function<void(common::Color &)> const &modifier) {
     Image modified = *this;
     modified.apply(modifier);
     return modified;
 }
 
 Image Image::applyToAll(
-    const std::function<void(common::Color &, int x, int y)> &modifier) {
+    std::function<void(common::Color &, int x, int y)> const &modifier) {
     Image modified = *this;
     modified.apply(modifier);
     return modified;

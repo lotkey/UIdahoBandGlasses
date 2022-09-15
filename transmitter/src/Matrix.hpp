@@ -1,9 +1,9 @@
 // Chris McVickar
 #pragma once
 
+#include <cmath>
 #include <functional>
 #include <iostream>
-#include <math.h>
 #include <tuple>
 #include <vector>
 
@@ -18,11 +18,11 @@ template <typename T> class Matrix {
     /// Construct matrix from size
     Matrix(int numrows, int numcols);
     /// Construct matrix from 2D array
-    Matrix(const std::vector<std::vector<T>> &data);
-    Matrix(const Matrix &);
+    Matrix(std::vector<std::vector<T>> const &data);
+    Matrix(Matrix const &);
     Matrix(Matrix &&);
     ~Matrix();
-    void operator=(const Matrix &);
+    void operator=(Matrix const &);
     void operator=(Matrix &&);
 
     const T *at(int row);
@@ -66,13 +66,13 @@ template <typename T> class Matrix {
     void allocateMemory();
     void freeMemory();
 
-    void apply(const std::function<void(T &)> &);
-    void apply(const std::function<void(T &, int, int)> &);
+    void apply(std::function<void(T &)> const &);
+    void apply(std::function<void(T &, int, int)> const &);
 };
 
 template <typename T> Matrix<T>::Matrix() {}
 
-template <typename T> Matrix<T>::Matrix(const Matrix<T> &m) { m.copyTo(*this); }
+template <typename T> Matrix<T>::Matrix(Matrix<T> const &m) { m.copyTo(*this); }
 
 template <typename T> Matrix<T>::Matrix(Matrix<T> &&m) { m.moveTo(*this); }
 
@@ -83,7 +83,7 @@ Matrix<T>::Matrix(int numrows, int numcols)
 }
 
 template <typename T>
-Matrix<T>::Matrix(const std::vector<std::vector<T>> &data)
+Matrix<T>::Matrix(std::vector<std::vector<T>> const &data)
     : m_numrows(data.size()), m_numcols(data.front().size()) {
     allocateMemory();
     for (int i = 0; i < m_numrows; i++) {
@@ -93,7 +93,7 @@ Matrix<T>::Matrix(const std::vector<std::vector<T>> &data)
     }
 }
 
-template <typename T> void Matrix<T>::operator=(const Matrix<T> &m) {
+template <typename T> void Matrix<T>::operator=(Matrix<T> const &m) {
     m.copyTo(*this);
 }
 
@@ -248,7 +248,7 @@ template <typename T> void Matrix<T>::moveTo(Matrix<T> &m) {
 }
 
 template <typename T>
-void Matrix<T>::apply(const std::function<void(T &)> &modifier) {
+void Matrix<T>::apply(std::function<void(T &)> const &modifier) {
     for (int i = 0; i < m_numrows; i++) {
         for (int j = 0; j < m_numcols; j++) {
             modifier(m_data[i][j]);
@@ -257,7 +257,7 @@ void Matrix<T>::apply(const std::function<void(T &)> &modifier) {
 }
 
 template <typename T>
-void Matrix<T>::apply(const std::function<void(T &, int, int)> &modifier) {
+void Matrix<T>::apply(std::function<void(T &, int, int)> const &modifier) {
     for (int i = 0; i < m_numrows; i++) {
         for (int j = 0; j < m_numcols; j++) {
             modifier(m_data[i][j], i, j);

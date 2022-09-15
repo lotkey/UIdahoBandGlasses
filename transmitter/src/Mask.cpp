@@ -2,13 +2,13 @@
 #include "Mask.hpp"
 #include "Image.hpp"
 #include "colors.hpp"
-#include "common/common.hpp"
+#include "common.hpp"
 
 #include <tuple>
 #include <vector>
 
 namespace transmitter {
-Mask::Mask(const Image &img) : Matrix<double>(img.numRows(), img.numCols()) {
+Mask::Mask(Image const &img) : Matrix<double>(img.numRows(), img.numCols()) {
     for (int i = 0; i < img.numRows(); i++) {
         for (int j = 0; j < img.numCols(); j++) {
             at(i, j) = img.at(i, j).intensity() / 255.0;
@@ -18,7 +18,7 @@ Mask::Mask(const Image &img) : Matrix<double>(img.numRows(), img.numCols()) {
 
 Mask::Mask(int numrows, int numcols) : Matrix<double>(numrows, numcols) {}
 
-Mask::Mask(const Matrix<double> &matrix) : Matrix<double>(matrix) {}
+Mask::Mask(Matrix<double> const &matrix) : Matrix<double>(matrix) {}
 
 Mask Mask::invert() const {
     Mask inverted = *this;
@@ -44,8 +44,8 @@ Image Mask::maskImage(Image img) const {
     return img;
 }
 
-Image Mask::toImage(const common::Color &fg_color,
-                    const common::Color &bg_color) {
+Image Mask::toImage(common::Color const &fg_color,
+                    common::Color const &bg_color) {
     Image img(numRows(), numCols());
     for (int i = 0; i < numRows(); i++) {
         for (int j = 0; j < numCols(); j++) {

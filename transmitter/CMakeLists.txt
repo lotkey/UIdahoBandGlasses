@@ -8,7 +8,7 @@ add_executable(transmitter
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Mask.cpp
     
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/common/Color.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/Color.cpp
 )
 
 set_target_properties(transmitter PROPERTIES 
@@ -17,4 +17,5 @@ set_target_properties(transmitter PROPERTIES
 
 target_include_directories(transmitter PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/
 )

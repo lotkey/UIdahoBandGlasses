@@ -2,7 +2,7 @@
 // RGB values courtesy of: https://www.rapidtables.com/web/color/RGB_Color.html
 #pragma once
 
-#include "common/Color.hpp"
+#include "Color.hpp"
 
 namespace transmitter::colors {
 static const common::Color Blank = {0, 0, 0};
