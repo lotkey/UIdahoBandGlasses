@@ -73,8 +73,8 @@ Team members should be able to read your code and generally understand it. Some 
 - Expanding on the above guideline, there should be 3 types of includes: files in this project, third-party libraries, and built-in libraries. They should be included in that order (and separated).
 - Use descriptive variable/function/class names. This means full words, unless there is a standard or popular abbreviation (img, mph, kB, etc.). 
 - Try to keep functions small. If you have a very large function, break it up into multiple if you can.
-- Comments. Every function prototype should have a comment unless it's very obvious what the function does ("int max(int, int)" for example). Nobody should have to read the implementation to understand the code. Class declarations should be commented and show what purpose the class serves (not just what it is).
-- Classes start with capital letters. Variable names can be camel-case or have underscores. Small variable names may not need either (numrows vs numRows vs num_rows).
+- Comments. Every function prototype should have a comment unless it's very obvious what the function does ("int max(int, int)" for example). Nobody should have to read the implementation to understand how to use your code. Class declarations should be commented and show what purpose the class serves (not just what it is).
+- Classes start with capital letters. Variable names can be camelCase or have underscores_instead. Small variable names may not need either (numrows vs numRows vs num_rows).
 - Classes should be split into a header file and source file(s), except for smaller classes.
 - Static non-public class member variables should have the "s_" prefix.
 - Non-static non-public class member variables should have the "m_" prefix.
