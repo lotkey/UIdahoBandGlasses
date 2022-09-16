@@ -24,7 +24,7 @@ void BMP::load(std::filesystem::path const& img_path)
     infile.read((char*)&m_infoHeader, sizeof(m_infoHeader));
 
     // The ColorHeader is used only for transparent images
-    if (m_infoHeader.bit_count == 32) {
+    if (32 == m_infoHeader.bit_count) {
       // Check if the file has bit mask color information
       if (m_infoHeader.size >= (sizeof(InfoHeader) + sizeof(ColorHeader))) {
         infile.read((char*)&m_colorHeader, sizeof(m_colorHeader));
@@ -44,7 +44,7 @@ void BMP::load(std::filesystem::path const& img_path)
     // Adjust the header fields for output.
     // Some editors will put extra info in the image file, we only save
     // the headers and the data.
-    if (m_infoHeader.bit_count == 32) {
+    if (32 == m_infoHeader.bit_count) {
       m_infoHeader.size = sizeof(InfoHeader) + sizeof(ColorHeader);
       m_fileHeader.offset_data =
         sizeof(FileHeader) + sizeof(InfoHeader) + sizeof(ColorHeader);
@@ -64,7 +64,7 @@ void BMP::load(std::filesystem::path const& img_path)
                   m_infoHeader.bit_count / 8);
 
     // Here we check if we need to take into account row padding
-    if (m_infoHeader.width % 4 == 0) {
+    if (0 == m_infoHeader.width % 4) {
       infile.read((char*)m_data.data(), m_data.size());
       m_fileHeader.file_size += static_cast<uint32_t>(m_data.size());
     } else {
@@ -121,11 +121,11 @@ void BMP::save(std::filesystem::path const& img_path) const
 {
   std::ofstream outfile(img_path, std::ios_base::binary);
   if (outfile) {
-    if (m_infoHeader.bit_count == 32) {
+    if (32 == m_infoHeader.bit_count) {
       writeHeaders(outfile);
       writeData(outfile);
-    } else if (m_infoHeader.bit_count == 24) {
-      if (m_infoHeader.width % 4 == 0) {
+    } else if (24 == m_infoHeader.bit_count) {
+      if (0 == m_infoHeader.width % 4) {
         writeHeaders(outfile);
         writeData(outfile);
       } else {
@@ -192,7 +192,7 @@ void BMP::writeHeaders(std::ofstream& outfile) const
 {
   outfile.write((char const*)&m_fileHeader, sizeof(m_fileHeader));
   outfile.write((char const*)&m_infoHeader, sizeof(m_infoHeader));
-  if (m_infoHeader.bit_count == 32) {
+  if (32 == m_infoHeader.bit_count) {
     outfile.write((char const*)&m_colorHeader, sizeof(m_colorHeader));
   }
 }

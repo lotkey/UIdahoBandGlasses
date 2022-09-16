@@ -46,7 +46,7 @@ Image Image::recolor(common::Color const& hue) const
 {
   Image recolored = *this;
   recolored.apply(
-    [hue](common::Color& color) { color = hue * color.intensity(); });
+    [&hue](common::Color& color) { color = hue * color.intensity(); });
   return recolored;
 }
 

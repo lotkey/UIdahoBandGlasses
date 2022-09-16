@@ -24,8 +24,6 @@ public:
   Image invert() const;
   /// @returns The image recolored with the provided color
   Image recolor(common::Color const&) const;
-  /// @returns The image with the color changed.
-  Image changeColor(common::Color const&) const;
   /// @returns The image with no saturation
   Image grayscale() const;
   /// @param s The saturation [0.0-1.0]
@@ -38,10 +36,19 @@ public:
   Image blackAndWhite() const;
   Image compress() const;
   /// @returns A 2D vector of encoded colors
-  [[nodiscard]] std::vector<uint8_t> encode() const;
+  std::vector<uint8_t> encode() const;
 
-  Image applyToAll(std::function<void(common::Color&)> const&);
-  Image applyToAll(std::function<void(common::Color&, int x, int y)> const&);
+  /// Apply a callback to every pixel in the image
+  /// @param callback Callback to apply to every pixel. Takes the color of the
+  /// pixel as a modifiable reference.
+  /// @return An image with the callback applied
+  Image applyToAll(std::function<void(common::Color&)> const& callback);
+  /// Apply a callback to every pixel in the image
+  /// @param callback Callback to apply to every pixel. Takes the color of the
+  /// pixel as a modifiable reference and the coordinates of the pixel.
+  /// @return An image with the callback applied
+  Image applyToAll(
+    std::function<void(common::Color&, int x, int y)> const& callback);
 
   /// @param array uint8_t array that encode() updates
   /// @param n size of array

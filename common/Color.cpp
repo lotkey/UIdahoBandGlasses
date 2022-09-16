@@ -110,7 +110,7 @@ uint8_t Color::encode() const
 
 double Color::hue() const
 {
-  if (delta() == 0) { return 0; }
+  if (0 == delta()) { return 0; }
 
   double hue;
   if (max() == m_r) {
@@ -126,7 +126,7 @@ double Color::hue() const
 
 double Color::saturation() const
 {
-  if (max() == 0) { return 0; }
+  if (0 == max()) { return 0; }
 
   double saturation = delta() / (double)(max() + min());
   return clip(saturation) / 255.0;

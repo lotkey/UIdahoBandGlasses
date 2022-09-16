@@ -43,12 +43,15 @@ set(FTDI_INCLUDE_DIR
 )
 
 add_executable(transmitter
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/BMP.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Image.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Mask.cpp
-    
-    ${CMAKE_CURRENT_SOURCE_DIR}/../common/Color.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMP.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/FTDI.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/FTDIDevice.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Image.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Mask.cpp
+  
+  ${CMAKE_CURRENT_SOURCE_DIR}/../common/Color.cpp
 )
 
 set_target_properties(transmitter PROPERTIES 
@@ -63,4 +66,5 @@ target_include_directories(transmitter PUBLIC
 
 target_link_libraries(transmitter 
     ${FTDI_LIBRARY}
+    pthread
 )

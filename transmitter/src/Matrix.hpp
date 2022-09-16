@@ -135,7 +135,7 @@ Matrix<T>::~Matrix()
 template<typename T>
 void Matrix<T>::freeMemory()
 {
-  if (m_data == nullptr) { return; }
+  if (nullptr == m_data) { return; }
   for (int i = 0; i < m_numrows; i++) { delete[] m_data[i]; }
   delete[] m_data;
   m_data = nullptr;
