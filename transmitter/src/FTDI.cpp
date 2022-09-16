@@ -50,6 +50,8 @@ FTDI::FTDI(int vendor, int product, int baudrate) :
 
 FTDI::~FTDI() { close(); }
 
+int FTDI::numDevices() const { return m_devices.size(); }
+
 std::vector<FTDIDevice> const& FTDI::devices() const { return m_devices; }
 
 int FTDI::vendor() const { return m_vendor; }
