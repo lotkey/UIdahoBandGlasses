@@ -72,7 +72,6 @@ int main()
     << "q=sparkle; x=XMas solid; z=slow twinkle\n"
     << "[=marqee one way; ]=marqee the other;\n"
     << "(=slow marqee one way; )=slow marqee the other;\n\n"
-    << " comma key <,> to stop loop\n"
     << " dot key <.> to quit\n";
 
   system("stty raw"); // enter raw mode so no newline is required for getchar

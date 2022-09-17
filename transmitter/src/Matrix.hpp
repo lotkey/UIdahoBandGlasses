@@ -11,7 +11,7 @@ namespace transmitter {
 /// Class for templated, fixed-size matrices.
 /// Any "modifiers" return a modified copy.
 /// Base class for Images and Masks.
-/// Since this is a templated class, there is no corresponding source file.
+/// Since this is a class template, there is no corresponding source file.
 template<typename T>
 class Matrix {
 public:
