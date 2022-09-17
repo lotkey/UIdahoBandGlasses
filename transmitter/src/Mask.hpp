@@ -1,4 +1,4 @@
-// Chris McVickar
+/// @author @lotkey Chris McVickar
 #pragma once
 
 #include "Image.hpp"

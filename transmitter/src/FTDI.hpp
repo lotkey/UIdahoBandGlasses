@@ -1,3 +1,4 @@
+/// @author @lotkey Chris McVickar
 #pragma once
 
 #include "FTDIDevice.hpp"

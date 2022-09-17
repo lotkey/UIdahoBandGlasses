@@ -1,3 +1,4 @@
+/// @author @lotkey Chris McVickar
 #pragma once
 
 /// Shared code between the receiver and transmitter. This code does not depend

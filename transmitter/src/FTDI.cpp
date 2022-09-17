@@ -1,3 +1,4 @@
+/// @author @lotkey Chris McVickar
 #include "FTDI.hpp"
 
 #include <iostream>

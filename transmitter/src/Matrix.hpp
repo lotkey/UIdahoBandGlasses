@@ -1,4 +1,4 @@
-// Chris McVickar
+/// @author @lotkey Chris McVickar
 #pragma once
 
 #include <cmath>
@@ -22,7 +22,7 @@ public:
   Matrix(std::vector<std::vector<T>> const& data);
   Matrix(Matrix const&);
   Matrix(Matrix&&);
-  ~Matrix();
+  virtual ~Matrix();
   void operator=(Matrix const&);
   void operator=(Matrix&&);
 

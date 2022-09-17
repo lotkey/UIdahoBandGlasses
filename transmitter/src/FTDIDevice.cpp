@@ -1,3 +1,4 @@
+/// @author @lotkey Chris McVickar
 #include "FTDIDevice.hpp"
 
 namespace transmitter {

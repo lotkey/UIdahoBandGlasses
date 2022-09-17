@@ -1,4 +1,4 @@
-// Chris McVickar
+/// @author @lotkey Chris McVickar
 #include "Image.hpp"
 #include "Matrix.hpp"
 #include "common.hpp"
@@ -76,8 +76,7 @@ Image Image::blackAndWhite() const
 {
   Image bw = *this;
   bw.apply([](common::Color& color) {
-    float brightness = color.intensity();
-    if (brightness > .5) {
+    if (color.intensity() > .5) {
       color = {255, 255, 255};
     } else {
       color = {0, 0, 0};
@@ -95,9 +94,9 @@ Image Image::compress() const
   return compressed;
 }
 
-std::vector<uint8_t> Image::encode() const
+std::vector<std::uint8_t> Image::encode() const
 {
-  std::vector<uint8_t> encoded_img;
+  std::vector<std::uint8_t> encoded_img;
 
   for (int i = 0; i < numRows(); i++) {
     for (int j = 0; j < numCols(); j++) {

@@ -1,14 +1,9 @@
-// Chris McVickar
+/// @author @lotkey Chris McVickar
 #include "Color.hpp"
 
-// #include <algorithm>
-// #include <bitset>
-// #include <iostream>
-#include <math.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-// #include <string>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 
 namespace common {
 Color Color::random() { return {rand() % 256, rand() % 256, rand() % 256}; }
@@ -47,16 +42,19 @@ Color Color::fromHSV(double h, double s, double v)
   return {(r + m) * 255, (g + m) * 255, (b + m) * 255};
 }
 
-Color Color::decode(uint8_t encoded)
+Color Color::decode(std::uint8_t encoded)
 {
-  uint8_t r;
-  uint8_t g;
-  uint8_t b;
+  std::uint8_t r;
+  std::uint8_t g;
+  std::uint8_t b;
   decode(encoded, r, g, b);
   return Color(r, g, b);
 }
 
-void Color::decode(uint8_t encoded_color, uint8_t& r, uint8_t& g, uint8_t& b)
+void Color::decode(std::uint8_t encoded_color,
+                   std::uint8_t& r,
+                   std::uint8_t& g,
+                   std::uint8_t& b)
 {
   b = encoded_color & 0b00000011;
   encoded_color = encoded_color >> 2;
@@ -97,12 +95,12 @@ double Color::intensity() const
   return clip(average) / 255.0;
 }
 
-uint8_t Color::encode() const
+std::uint8_t Color::encode() const
 {
-  uint8_t r = (m_r / 255.f) * 7;
-  uint8_t g = (m_g / 255.f) * 7;
-  uint8_t b = (m_b / 255.f) * 3;
-  uint8_t encoded = r & 0b00000111;
+  std::uint8_t r = (m_r / 255.f) * 7;
+  std::uint8_t g = (m_g / 255.f) * 7;
+  std::uint8_t b = (m_b / 255.f) * 3;
+  std::uint8_t encoded = r & 0b00000111;
   encoded = (encoded << 3) | (g & 0b00000111);
   encoded = (encoded << 2) | (b & 0b00000011);
   return encoded;
@@ -156,13 +154,13 @@ Color Color::withHue(double h) const
   return fromHSV(h, saturation(), value());
 }
 
-uint8_t Color::getR() const { return m_r; }
+std::uint8_t Color::getR() const { return m_r; }
 
-uint8_t Color::getG() const { return m_g; }
+std::uint8_t Color::getG() const { return m_g; }
 
-uint8_t Color::getB() const { return m_b; }
+std::uint8_t Color::getB() const { return m_b; }
 
-uint8_t& Color::operator[](int channel)
+std::uint8_t& Color::operator[](int channel)
 {
   switch (channel) {
     case 0: return m_r;
@@ -235,16 +233,16 @@ void Color::operator+=(Color const& color) { (*this) = *this + color; }
 void Color::operator-=(Color const& color) { (*this) = *this - color; }
 #pragma endregion
 
-uint8_t Color::clip(double f)
+std::uint8_t Color::clip(double f)
 {
   if (f > 255) { return 255; }
   if (f < 0) { return 0; }
-  return (uint8_t)f;
+  return static_cast<std::uint8_t>(f);
 }
 
-uint8_t Color::max() const { return std::max(m_r, std::max(m_g, m_b)); }
+std::uint8_t Color::max() const { return std::max(m_r, std::max(m_g, m_b)); }
 
-uint8_t Color::min() const { return std::min(m_r, std::min(m_g, m_b)); }
+std::uint8_t Color::min() const { return std::min(m_r, std::min(m_g, m_b)); }
 
-uint8_t Color::delta() const { return max() - min(); }
+std::uint8_t Color::delta() const { return max() - min(); }
 } // namespace common

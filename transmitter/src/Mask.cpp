@@ -1,4 +1,4 @@
-// Chris McVickar
+/// @author @lotkey Chris McVickar
 #include "Mask.hpp"
 #include "Image.hpp"
 #include "colors.hpp"

@@ -19,10 +19,10 @@
 ///
 /// Some minor edits/cleanup
 ///
-/// @author Hayden Carroll
+/// @author @haydenccarroll Hayden Carroll
 /// Some more minor edits by Hayden Carroll
 ///
-/// @author Chris McVickar
+/// @author @lotkey Chris McVickar
 ////////////////////////////////////////////////////////////////
 #include "FTDI.hpp"
 #include "colors.hpp"

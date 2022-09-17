@@ -1,4 +1,4 @@
-// Chris McVickar
+/// @author @lotkey Chris McVickar
 #pragma once
 
 #include "Matrix.hpp"
@@ -36,7 +36,7 @@ public:
   Image blackAndWhite() const;
   Image compress() const;
   /// @returns A 2D vector of encoded colors
-  std::vector<uint8_t> encode() const;
+  std::vector<std::uint8_t> encode() const;
 
   /// Apply a callback to every pixel in the image
   /// @param callback Callback to apply to every pixel. Takes the color of the
@@ -50,10 +50,10 @@ public:
   Image applyToAll(
     std::function<void(common::Color&, int x, int y)> const& callback);
 
-  /// @param array uint8_t array that encode() updates
+  /// @param array std::uint8_t array that encode() updates
   /// @param n size of array
   /// @returns true if encode() was successful, false else
-  bool encode(uint8_t array[], int n) const;
+  bool encode(std::uint8_t array[], int n) const;
 
 protected:
   Image(Matrix<common::Color> const&);
