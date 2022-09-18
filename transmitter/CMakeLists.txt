@@ -36,6 +36,7 @@ add_executable(transmitter
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMP.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/config.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/FTDI.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/FTDIDevice.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Image.cpp

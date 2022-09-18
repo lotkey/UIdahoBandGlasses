@@ -1,7 +1,9 @@
 #include "Writer.hpp"
 
 namespace transmitter {
-Writer::Writer(FTDI& ftdi) : m_ftdi(ftdi) {}
+Writer::Writer(FTDI& ftdi) :
+    m_ftdi(ftdi), m_currentThread(std::make_unique<InstructionThread>(ftdi))
+{}
 
 void Writer::write(Instruction const& instruction)
 {
@@ -24,7 +26,7 @@ void Writer::clearQueue()
   m_oldThreads.lock();
   m_oldThreads->emplace_back(std::move(m_currentThread));
   m_oldThreads.unlock();
-  m_currentThread = std::make_unique<InstructionThread>();
+  m_currentThread = std::make_unique<InstructionThread>(m_ftdi);
 }
 
 void Writer::finish() { exit(ThreadStatus::Finishing); }

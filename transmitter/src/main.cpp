@@ -25,8 +25,11 @@
 /// @author @lotkey Chris McVickar
 ////////////////////////////////////////////////////////////////
 #include "FTDI.hpp"
+#include "Instruction.hpp"
+#include "Writer.hpp"
 #include "colors.hpp"
 #include "common.hpp"
+#include "config.hpp"
 
 #include <ftdi.h>
 
@@ -50,11 +53,12 @@ constexpr int Vendor = 0x0403;
 constexpr int Product = 0x6001;
 constexpr int Baudrate = 57600;
 
-void flashColor(transmitter::FTDI& ftdi, common::Color const& color);
-
 int main()
 {
-  transmitter::FTDI ftdi = transmitter::FTDI(Vendor, Product, Baudrate);
+  transmitter::config::setImageHeight(ImageHeight);
+  transmitter::config::setImageWidth(ImageWidth);
+  transmitter::FTDI ftdi(Vendor, Product, Baudrate);
+  transmitter::Writer writer(ftdi);
   char letter;    // current letter user entered
   int nbytes = 0; // number of bytes a package sent (global variable)
 
@@ -81,60 +85,58 @@ int main()
     letter = getchar();
     switch (letter) {
       case 'r': {
-        flashColor(ftdi, transmitter::colors::Red);
+        writer.write(transmitter::Flash(transmitter::colors::Red, 0.5));
         break;
       }
       case 'b': {
-        flashColor(ftdi, transmitter::colors::Blue);
+        writer.write(transmitter::Flash(transmitter::colors::Blue, 0.5));
         break;
       }
       case 'e': {
-        flashColor(ftdi, transmitter::colors::Green);
+        writer.write(transmitter::Flash(transmitter::colors::Green, 0.5));
         break;
       }
       case 'd': {
-        ftdi.write(transmitter::Image(ImageHeight, ImageWidth));
+        writer.write(transmitter::On(transmitter::colors::Blank));
         break;
       }
       case 'g': {
-        flashColor(ftdi, transmitter::colors::Gold);
+        writer.write(transmitter::Flash(transmitter::colors::Gold, 0.5));
         break;
       }
       case 'w': {
-        flashColor(ftdi, transmitter::colors::White);
+        writer.write(transmitter::Flash(transmitter::colors::White, 0.5));
         break;
       }
       case 'n': {
-        ftdi.write(transmitter::Image(
-          ImageHeight, ImageWidth, transmitter::colors::Gold));
+        writer.write(transmitter::On(transmitter::colors::Gold));
         break;
       }
       case 'o': {
-        ftdi.write(transmitter::Image(
-          ImageHeight, ImageWidth, transmitter::colors::White));
+        writer.write(transmitter::On(transmitter::colors::White));
         break;
       }
       case 'v': {
-        ftdi.write(transmitter::Image(
-          ImageHeight, ImageWidth, transmitter::colors::Orange));
+        writer.write(transmitter::On(transmitter::colors::Orange));
         break;
       }
       case 'm': {
-        ftdi.write(transmitter::Image(
-          ImageHeight, ImageWidth, transmitter::colors::Magenta));
+        writer.write(transmitter::On(transmitter::colors::Magenta));
         break;
       }
       case 'y': {
-        flashColor(ftdi, transmitter::colors::Yellow);
+        writer.write(transmitter::Flash(transmitter::colors::Yellow, 0.5));
         break;
       }
       case 'k': {
-        flashColor(ftdi, transmitter::colors::Cyan);
+        writer.write(transmitter::Flash(transmitter::colors::Cyan, 0.5));
         break;
       }
       case '.': {
         ftdi.close(); // unnecessary, will close on destruction
         std::cerr << "End of program" << std::endl;
+        writer.write(transmitter::Off());
+        writer.quit();
         return EXIT_SUCCESS;
       }
       default: {
@@ -143,13 +145,4 @@ int main()
       }
     }
   }
-}
-
-/// This is a temporary utility function. This functionality will be moved over
-/// to FTDI (or some other place) once the threading situation is figured out.
-void flashColor(transmitter::FTDI& ftdi, common::Color const& color)
-{
-  ftdi.write(transmitter::Image(ImageHeight, ImageWidth, color));
-  usleep(SLP);
-  ftdi.write(transmitter::Image(ImageHeight, ImageWidth));
 }
