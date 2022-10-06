@@ -63,8 +63,15 @@ int FTDI::baudrate() const { return m_self->baudrate; }
 
 int FTDI::write(Image const& img)
 {
-  auto encoded = img.encode();
-  return handle(ftdi_write_data(m_self, encoded.data(), encoded.size()));
+  auto imgEncoded = img.encode();
+  auto packetSize = imgEncoded.size() / NUM_PACKETS;
+  for (int i=0; i < NUM_PACKETS; i++)
+  {
+    std::vector<uint8_t> encoded = {i}; // has packet num as header info
+    encoded.insert(encoded.end(), imgEncoded.begin() + packetSize * i, imgEncoded.begin() + packetSize * (i+1));
+    handle(ftdi_write_data(m_self, encoded.data(), encoded.size()));
+  }
+  return 0;
 }
 
 int FTDI::close()

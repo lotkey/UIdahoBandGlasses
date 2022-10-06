@@ -6,6 +6,9 @@
 
 #include <ftdi.h>
 
+#define NUM_PACKETS 3
+
+
 namespace transmitter {
 /// @brief Class to represent and manage an FTDI connection.
 /// @throws Throws on any FTDI error
@@ -33,9 +36,10 @@ public:
   int baudrate() const;
 
   /// @brief Transmits an image
+  /// @param packetNum the packet number to be transmitted
   /// @param img Image to transmit
   /// @return The number of bytes transmitted
-  int write(Image const& img);
+  int write(uint8_t packetNum, Image const& img)
   /// @brief Closes the FTDI connection and frees any associated memory.
   /// @return Return value of ftdi_usb_close
   int close();

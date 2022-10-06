@@ -44,6 +44,7 @@
 #define DROOL 1000000
 #define DAB 50000
 #define SLP 40000
+
 constexpr int ImageWidth = 16;
 constexpr int ImageHeight = 16;
 constexpr int Vendor = 0x0403;
@@ -151,5 +152,5 @@ void flashColor(transmitter::FTDI& ftdi, common::Color const& color)
 {
   ftdi.write(transmitter::Image(ImageHeight, ImageWidth, color));
   usleep(SLP);
-  ftdi.write(transmitter::Image(ImageHeight, ImageWidth));
+  ftdi.write(transmitter::Image(ImageHeight, ImageWidth, color));
 }
