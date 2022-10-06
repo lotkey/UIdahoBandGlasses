@@ -42,7 +42,7 @@ void setup() {
     pinMode(BLUE_PIN_LOC, OUTPUT);  // sets the pin as output
 
     setDipSwitch();
-    startId = dipSwitch + 1;
+    startId = dipSwitch % (256 / NUM_PACKETS) + 1;
 
     packetNum = dipSwitch / (256 / NUM_PACKETS);
     Serial.println("\n The dipswitch value is: ");
@@ -50,13 +50,16 @@ void setup() {
 
     Serial.println("\n The packet num is: ");
     Serial.println(packetNum);
+
+    Serial.println("\n The startId is: ");
+    Serial.println(startId);
     
     //  SoftPWMBegin();
     //  SoftPWMSet(RED_PIN_LOC, 0);
     //  SoftPWMSet(GREEN_PIN_LOC, 0);
     //  SoftPWMSet(BLUE_PIN_LOC, 0);
     //  SoftPWMSetFadeTime(RED_PIN_LOC, 100, 1000);
-    //  SoftPWMSetFadeTime(GREEN_PIN_LOC, 10, 10);
+    //  SoftPWMSetFadeTime(GREEN_PIN_LOC, 10, 10); 
     //  SoftPWMSetFadeTime(BLUE_PIN_LOC, 10, 10);
     setColor(0, 0, 0);
     mrf.reset();
@@ -103,6 +106,13 @@ void handle_rx() {
     uint8_t currPackNum = info->rx_data[0];
     uint8_t encodedColor = info->rx_data[startId];
     uint8_t red, blue, green = 0;
+
+    for (int i=0; i < 87; i++)
+    {
+      Serial.print(int(info->rx_data[i]));
+      Serial.print(" ");
+    }
+ 
     
     Serial.print("curr pack number ");
     Serial.print(currPackNum);
