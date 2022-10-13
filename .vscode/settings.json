@@ -44,6 +44,7 @@
         "typeinfo": "cpp",
         "bit": "cpp",
         "cinttypes": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "chrono": "cpp"
     }
 }

@@ -14,9 +14,10 @@ public:
   std::list<std::pair<Image, double>> const& writes() const;
 
 protected:
-  std::list<std::pair<Image, double>> m_writes;
+  // Hide the constructor so it can only be called by inherited types
+  Instruction() = default;
 
-  virtual void abstracter() = 0;
+  std::list<std::pair<Image, double>> m_writes;
 };
 
 class On : public Instruction {
@@ -25,9 +26,6 @@ public:
 
   On(Image const& img);
   On(common::Color const& color);
-
-private:
-  virtual void abstracter() override {}
 };
 
 class Off : public Instruction {
@@ -35,9 +33,6 @@ public:
   virtual ~Off() = default;
 
   Off();
-
-private:
-  virtual void abstracter() override {}
 };
 
 class Flash : public Instruction {
@@ -46,8 +41,5 @@ public:
 
   Flash(Image const& img, double durationSeconds);
   Flash(common::Color const&, double durationSeconds);
-
-private:
-  virtual void abstracter() override {}
 };
 } // namespace transmitter

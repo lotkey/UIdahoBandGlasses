@@ -2,90 +2,110 @@
 
 namespace transmitter {
 Writer::Writer(FTDI& ftdi) :
-    m_ftdi(ftdi), m_currentThread(std::make_unique<InstructionThread>(ftdi))
+    m_ftdi(ftdi),
+    m_instructionThread(executeInstructions,
+                        &ftdi,
+                        &m_instructionQueue,
+                        &m_state)
 {}
+
+Writer::~Writer()
+{
+  bool exited = false;
+  m_state.lock();
+  exited = ThreadState::Exited == *m_state;
+  m_state.unlock();
+  if (!exited) { quit(); }
+}
 
 void Writer::write(Instruction const& instruction)
 {
-  clearQueue();
-  for (auto const& [img, length] : instruction.writes()) {
-    m_currentThread->queue(img, length);
+  m_instructionQueue.lock();
+  m_instructionQueue->clear();
+  for (auto const& pair : instruction.writes()) {
+    m_instructionQueue->push_back(pair);
   }
+  m_instructionQueue.unlock();
 }
 
 void Writer::queue(Instruction const& instruction)
 {
-  for (auto const& [img, length] : instruction.writes()) {
-    m_currentThread->queue(img, length);
+  m_instructionQueue.lock();
+  for (auto const& pair : instruction.writes()) {
+    m_instructionQueue->push_back(pair);
   }
+  m_instructionQueue.unlock();
 }
 
-void Writer::clearQueue()
+void Writer::clear() { write(Off()); }
+
+void Writer::finish()
 {
-  m_currentThread->clearQueue();
-  m_oldThreads.lock();
-  m_oldThreads->emplace_back(std::move(m_currentThread));
-  m_oldThreads.unlock();
-  m_currentThread = std::make_unique<InstructionThread>(m_ftdi);
+  queue(Off());
+  exit(ThreadState::Finishing);
 }
-
-void Writer::finish() { exit(ThreadStatus::Finishing); }
 
 void Writer::quit()
 {
-  clearQueue();
-  exit(ThreadStatus::Quitting);
+  write(Off());
+  exit(ThreadState::Quitting);
 }
 
-void Writer::exit(ThreadStatus exitStatus)
+void Writer::exit(ThreadState exitingState)
 {
-  m_status.lock();
-  if (ThreadStatus::Running == m_status) {
-    m_status = exitStatus;
-    m_status.unlock();
-    m_cleanupThread.join();
-  } else {
-    m_status.unlock();
+  if (!(ThreadState::Finishing == exitingState ||
+        ThreadState::Quitting == exitingState)) {
+    exitingState = ThreadState::Quitting;
   }
+
+  m_state.lock();
+  *m_state = exitingState;
+  m_state.unlock();
+  m_instructionThread.join();
+  *m_state = ThreadState::Exited;
 }
 
-void Writer::cleanUpAfter(Writer* writer)
+void Writer::executeInstructions(
+  FTDI* ftdiPtr,
+  Guarded<std::list<std::pair<Image, double>>>* instructionQueuePtr,
+  Guarded<ThreadState>* statePtr)
 {
-  auto& oldThreads = writer->m_oldThreads;
-  auto& status = writer->m_status;
-  auto& currentThread = writer->m_currentThread;
+  auto& ftdi = *ftdiPtr;
+  auto& instructionQueue = *instructionQueuePtr;
+  auto& state = *statePtr;
+  std::chrono::system_clock::time_point imageStart =
+    std::chrono::system_clock::now();
 
   while (true) {
-    status.lock();
-    ThreadStatus statusCopy = status;
-    status.unlock();
+    instructionQueue.lock();
+    state.lock();
 
-    if (ThreadStatus::Running != statusCopy) { break; }
-
-    oldThreads.lock();
-    if (!oldThreads->empty()) {
-      oldThreads->front()->quit();
-      oldThreads->pop_front();
-      oldThreads.unlock();
+    if (instructionQueue->empty()) {
+      if ((ThreadState::Finishing == *state ||
+           ThreadState::Quitting == *state)) {
+        break;
+      }
+      std::chrono::system_clock::time_point imageStart =
+        std::chrono::system_clock::now();
+      instructionQueue.unlock();
+      state.unlock();
       continue;
     }
-    oldThreads.unlock();
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  }
 
-  oldThreads.lock();
-  status.lock();
-  bool quitting = ThreadStatus::Quitting == status;
-  status.unlock();
+    if (-1 == instructionQueue->front().second &&
+        1 == instructionQueue->size()) {
+      ftdi.write(instructionQueue->front().first);
+    } else if (imageStart + std::chrono::duration<double>(
+                              instructionQueue->front().second) >=
+               std::chrono::system_clock::now()) {
+      instructionQueue->pop_front();
+      imageStart = std::chrono::system_clock::now();
+    } else {
+      ftdi.write(instructionQueue->front().first);
+    }
 
-  if (quitting) {
-    for (auto& thread : oldThreads.get()) { thread->quit(); }
-    currentThread->quit();
-  } else {
-    for (auto& thread : oldThreads.get()) { thread->finish(); }
-    currentThread->finish();
+    instructionQueue.unlock();
+    state.unlock();
   }
-  oldThreads->clear();
-  oldThreads.unlock();
 }
 } // namespace transmitter

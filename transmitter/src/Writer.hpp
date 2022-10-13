@@ -1,31 +1,38 @@
 #pragma once
 
 #include "FTDI.hpp"
+#include "Guarded.hpp"
 #include "Instruction.hpp"
-#include "InstructionThread.hpp"
 
+#include <chrono>
+#include <list>
 #include <thread>
 
 namespace transmitter {
-class Writer {
+enum class ThreadState { Running, Finishing, Quitting, Exited };
+
+class Writer final {
 public:
   Writer(FTDI& ftdi);
+  ~Writer();
 
   void write(Instruction const& instruction);
   void queue(Instruction const& instruction);
-  void clearQueue();
+  void clear();
   void finish();
   void quit();
 
 private:
+  std::thread m_instructionThread;
+  Guarded<std::list<std::pair<Image, double>>> m_instructionQueue;
+  Guarded<ThreadState> m_state = ThreadState::Running;
   FTDI& m_ftdi;
-  std::unique_ptr<InstructionThread> m_currentThread;
-  Guarded<std::list<std::unique_ptr<InstructionThread>>> m_oldThreads;
-  Guarded<ThreadStatus> m_status = ThreadStatus::Running;
-  std::thread m_cleanupThread = std::thread(cleanUpAfter, this);
 
-  static void cleanUpAfter(Writer* writer);
+  static void executeInstructions(
+    FTDI* ftdiPtr,
+    Guarded<std::list<std::pair<Image, double>>>* instructionQueuePtr,
+    Guarded<ThreadState>* statePtr);
 
-  void exit(ThreadStatus exitStatus);
+  void exit(ThreadState exitingState);
 };
 } // namespace transmitter

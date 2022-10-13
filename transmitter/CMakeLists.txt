@@ -41,7 +41,6 @@ add_executable(transmitter
   ${CMAKE_CURRENT_SOURCE_DIR}/src/FTDIDevice.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Image.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Instruction.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/InstructionThread.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Mask.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Writer.cpp
   
