@@ -133,10 +133,8 @@ int main()
         break;
       }
       case '.': {
-        ftdi.close(); // unnecessary, will close on destruction
-        std::cerr << "End of program" << std::endl;
-        writer.write(transmitter::Off());
         writer.quit();
+        std::cerr << "\nEnd of program." << std::endl;
         return EXIT_SUCCESS;
       }
       default: {

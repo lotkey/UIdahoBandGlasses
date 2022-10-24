@@ -83,29 +83,31 @@ void Writer::executeInstructions(
     if (instructionQueue->empty()) {
       if ((ThreadState::Finishing == *state ||
            ThreadState::Quitting == *state)) {
-        break;
+        break; // exit the loop
       }
       std::chrono::system_clock::time_point imageStart =
         std::chrono::system_clock::now();
-      instructionQueue.unlock();
-      state.unlock();
-      continue;
-    }
 
-    if (-1 == instructionQueue->front().second &&
-        1 == instructionQueue->size()) {
-      ftdi.write(instructionQueue->front().first);
-    } else if (imageStart + std::chrono::duration<double>(
-                              instructionQueue->front().second) >=
-               std::chrono::system_clock::now()) {
-      instructionQueue->pop_front();
-      imageStart = std::chrono::system_clock::now();
     } else {
-      ftdi.write(instructionQueue->front().first);
+      if (-1 == instructionQueue->front().second &&
+          1 == instructionQueue->size()) {
+        ftdi.write(instructionQueue->front().first);
+      } else if (imageStart + std::chrono::duration<double>(
+                                instructionQueue->front().second) >=
+                 std::chrono::system_clock::now()) {
+        instructionQueue->pop_front();
+        imageStart = std::chrono::system_clock::now();
+      } else {
+        ftdi.write(instructionQueue->front().first);
+      }
     }
 
     instructionQueue.unlock();
     state.unlock();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
+
+  instructionQueue.unlock();
+  state.unlock();
 }
 } // namespace transmitter
