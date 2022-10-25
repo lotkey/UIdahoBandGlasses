@@ -1,13 +1,11 @@
 #include "Writer.hpp"
 
 namespace transmitter {
-Writer::Writer(FTDI& ftdi) :
-    m_ftdi(ftdi),
-    m_instructionThread(executeInstructions,
-                        &ftdi,
-                        &m_instructionQueue,
-                        &m_state)
-{}
+Writer::Writer(FTDI& ftdi) : m_ftdi(ftdi)
+{
+  m_instructionThread =
+    new std::thread(executeInstructions, &ftdi, &m_instructionQueue, &m_state);
+}
 
 Writer::~Writer()
 {
@@ -16,6 +14,7 @@ Writer::~Writer()
   exited = ThreadState::Exited == *m_state;
   m_state.unlock();
   if (!exited) { quit(); }
+  delete m_instructionThread;
 }
 
 void Writer::write(Instruction const& instruction)
@@ -61,7 +60,7 @@ void Writer::exit(ThreadState exitingState)
   m_state.lock();
   *m_state = exitingState;
   m_state.unlock();
-  m_instructionThread.join();
+  m_instructionThread->join();
   *m_state = ThreadState::Exited;
 }
 

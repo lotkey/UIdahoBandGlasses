@@ -22,13 +22,13 @@ find_library(FTDI_LIBRARY
 
 if(FTDI_LIBRARY)
   message(STATUS "libftdi library found: ${FTDI_LIBRARY}")
-else(FTDI_LIBRARY)
+else
   message(SEND_ERROR "libftdi library not found.")
 endif(FTDI_LIBRARY)
 
 if(FTDI_INCLUDE_DIR)
   message(STATUS "libftdi headers found in: ${FTDI_INCLUDE_DIR}")
-else(FTDI_INCLUDE_DIR)
+else
   message(SEND_ERROR "libftdi headers not found.")
 endif(FTDI_INCLUDE_DIR)
 

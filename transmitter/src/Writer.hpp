@@ -33,7 +33,7 @@ private:
   // Reference to FTDI device to write to
   FTDI& m_ftdi;
   // Thread that writes to the FTDI device
-  std::thread m_instructionThread;
+  std::thread* m_instructionThread = nullptr;
 
   ///////////////////////////////////////////////////////
   // Members that are shared with the instruction thread
