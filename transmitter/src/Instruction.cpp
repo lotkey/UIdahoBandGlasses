@@ -1,5 +1,5 @@
 #include "Instruction.hpp"
-#include "Config.hpp"
+#include "config.hpp"
 
 namespace transmitter {
 std::list<std::pair<Image, double>> const& Instruction::writes() const

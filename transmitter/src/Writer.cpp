@@ -72,8 +72,7 @@ void Writer::executeInstructions(
   auto& ftdi = *ftdiPtr;
   auto& instructionQueue = *instructionQueuePtr;
   auto& state = *statePtr;
-  std::chrono::system_clock::time_point imageStart =
-    std::chrono::system_clock::now();
+  auto imageStart = std::chrono::system_clock::now();
 
   while (true) {
     instructionQueue.lock();
@@ -84,15 +83,14 @@ void Writer::executeInstructions(
            ThreadState::Quitting == *state)) {
         break; // exit the loop
       }
-      std::chrono::system_clock::time_point imageStart =
-        std::chrono::system_clock::now();
+      imageStart = std::chrono::system_clock::now();
 
     } else {
       if (-1 == instructionQueue->front().second &&
           1 == instructionQueue->size()) {
         ftdi.write(instructionQueue->front().first);
       } else if (imageStart + std::chrono::duration<double>(
-                                instructionQueue->front().second) >=
+                                instructionQueue->front().second) <=
                  std::chrono::system_clock::now()) {
         instructionQueue->pop_front();
         imageStart = std::chrono::system_clock::now();
