@@ -8,29 +8,19 @@ set(CMAKE_BUILD_TYPE Debug)
 find_path(FTDI_INCLUDE_DIR 
   names ftdi.h
   paths /usr/include
-  /usr/local/include
-  /opt/local/include
+        /usr/local/include
+        /opt/local/include
   PATH_SUFFIXES libftdi libftdi1
+  REQUIRED
 )
 
 find_library(FTDI_LIBRARY
   names ftdi ftdi1
   paths /usr/lib
-  /usr/local/lib
-  /opt/local/lib
+        /usr/local/lib
+        /opt/local/lib
+  REQUIRED
 )
-
-if(FTDI_LIBRARY)
-  message(STATUS "libftdi library found: ${FTDI_LIBRARY}")
-else()
-  message(SEND_ERROR "libftdi library not found.")
-endif(FTDI_LIBRARY)
-
-if(FTDI_INCLUDE_DIR)
-  message(STATUS "libftdi headers found in: ${FTDI_INCLUDE_DIR}")
-else()
-  message(SEND_ERROR "libftdi headers not found.")
-endif(FTDI_INCLUDE_DIR)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/
