@@ -13,6 +13,7 @@ public:
   /// @returns A random image with the specified size
   static Image noise(int numrows, int numcols);
 
+  Image() = default;
   /// Construct an image from a given size and an optional fill color
   Image(int numrows, int numcols, common::Color const& fillColor = {});
   /// Construct an image from a 2D vector array
