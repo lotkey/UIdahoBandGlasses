@@ -27,9 +27,9 @@ int main()
   std::cerr << "Type 'q' to quit." << std::endl;
   while (true) {
     if (lime) {
-      transmitter::On(transmitter::colors::Lime);
+      writer.write(transmitter::On(transmitter::colors::Lime));
     } else {
-      transmitter::On(transmitter::colors::Magenta);
+      writer.write(transmitter::On(transmitter::colors::Magenta));
     }
     std::getline(std::cin, input);
     if (input == "q") { break; }
