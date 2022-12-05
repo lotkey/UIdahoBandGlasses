@@ -6,6 +6,11 @@ function run_no_output() {
 
 echo "Installing requirements..."
 run_no_output "sudo apt install make cmake g++ clang-format git code"
+mkdir .git && cd .git
+git clone https://github.com/nlohmann/json.git && cd json && mkdir build && cd build
+cmake .. && cmake --build . && sudo cmake --install .
+cd ../../..
+rm -rf .git
 echo "Requirements installed."
 echo ""
 
