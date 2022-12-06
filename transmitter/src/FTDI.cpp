@@ -64,7 +64,40 @@ int FTDI::baudrate() const { return m_self->baudrate; }
 int FTDI::write(Image const& img)
 {
   auto encoded = img.encode();
-  return handle(ftdi_write_data(m_self, encoded.data(), encoded.size()));
+  int bytesLeft = encoded.size();
+  
+  int currPackNum = 0;
+  int packetSize = m_PACKET_SIZE;
+  int totalBytesSent = 0;
+  
+  while (bytesLeft > 0)
+  {
+    if (bytesLeft < m_PACKET_SIZE) // if last packet doesnt need to be full
+    {
+        packetSize = bytesLeft;
+    }
+
+    // indexes to pull from encoded image
+    auto startPos = encoded.begin() + (m_PACKET_SIZE * currPackNum);
+    auto endPos = startPos + packetSize - 1; // -1 since we need space for packet #
+
+    auto currPackVec = std::vector<uint8_t>(startPos, endPos);
+    currPackVec.insert(currPackVec.begin(), currPackNum); // insert packet number
+
+    int currBytes = handle(ftdi_write_data(m_self, currPackVec.data(), currPackVec.size()));
+    if (currBytes < 0) // there was an error
+    {
+        return currBytes;
+    }
+
+    usleep(m_TIME_BETWEEN_PACKETS); // sleep between packets to give receivers time to process last packet
+                                    // (should be 0.02 seconds)
+    totalBytesSent += currBytes;
+    currPackNum++;
+    bytesLeft -= m_PACKET_SIZE;
+  }
+
+  return totalBytesSent; 
 }
 
 int FTDI::close()
