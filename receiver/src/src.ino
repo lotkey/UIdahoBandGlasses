@@ -14,7 +14,7 @@
  *
  * Edited By Hayden Carroll
  * University of Idaho
- * 5/2/2022
+ * 12/6/2022
  *
  */
 
@@ -28,33 +28,18 @@ int dip7_pin = 9;
 int pin_interrupt = 2;
 unsigned int dipSwitch = 0; // value of the dipswitch for the board
 int startId; // value of where in the packet to read from (currently should
-             // equal dipswitch, unless we add header info, we would offset it)
+             // equal dipswitch, unless we add header info, we would offset it);
+uint8_t packetNum;
 
 Mrf24j mrf(pin_reset, pin_cs, pin_interrupt);
 
 void setup() {
     DDRC = 0x00;
-
     pinMode(redPin, OUTPUT);   // sets the pin as output
     pinMode(greenPin, OUTPUT); // sets the pin as output
     pinMode(bluePin, OUTPUT);  // sets the pin as output
 
-    //    SoftPWMBegin();
-    //    SoftPWMSet(redPin, 0);
-    //  SoftPWMSet(greenPin, 0);
-    //  SoftPWMSet(bluePin, 0);
-    //    SoftPWMSetFadeTime(redPin, 100, 1000);
-    //  SoftPWMSetFadeTime(greenPin, 10, 10);
-    //  SoftPWMSetFadeTime(bluePin, 10, 10);
-
-    // The following pins are connected to the rotary or DIP switch that sets
-    // the channel. They are all inputs, but we write to them to enable the
-    // internal pullup resistor.
-
-    Serial.begin(38400);
-
-    setColor(0, 0, 0);
-
+    // setup mrf stuff
     mrf.reset();
     mrf.init();
     mrf.set_pan(2015);
@@ -63,8 +48,13 @@ void setup() {
     mrf.set_promiscuous(true);
     mrf.set_bufferPHY(true);
 
+    // do interrupts
     attachInterrupt(0, interrupt_routine, CHANGE);
     interrupts();
+
+    Serial.begin(38400);
+
+    // dipswitch pins
     pinMode(A0, INPUT_PULLUP);
     pinMode(A1, INPUT_PULLUP);
     pinMode(A2, INPUT_PULLUP);
@@ -74,25 +64,51 @@ void setup() {
     pinMode(dip7_pin, INPUT_PULLUP);
     pinMode(dip8_pin, INPUT_PULLUP);
 
-    dipSwitch = (digitalRead(dip8_pin))
-                << 7; // get 8th dip switch bit, shift it to 8th pos
-    dipSwitch =
-        dipSwitch | (digitalRead(dip7_pin)
-                     << 6); // get 7th dip switch bit, shift it to 7th pos
-    dipSwitch = (dipSwitch | (PINC & 0x3F)); // get 1-6th dip switch bit
+    // calculate dip switch value
+    dipSwitch = (digitalRead(dip8_pin)) << 7;
+    dipSwitch = dipSwitch | (digitalRead(dip7_pin) << 6);
+    dipSwitch = (dipSwitch | (PINC & 0x3F));
     dipSwitch = ~dipSwitch & 0xFF;
 
-    startId = dipSwitch;
-    Serial.println("\n The dipswitch value is: ");
-    Serial.println(dipSwitch);
+    // calculate packet number based off of dip switch
+    if (dipSwitch >= 0 && dipSwitch < 95)
+    {
+      packetNum = 0;
+    } else if (dipSwitch >= 95 && dipSwitch < 190)
+    {
+      packetNum = 1;
+    } else
+    {
+      packetNum = 2;
+    }
+
+    // calculate startId (position of where to grab rgb info from packet)
+    startId = (dipSwitch % 95) + 1; // +1 because first byte in packet is packet num
+ 
+    // setup softpwm stuff 
+//    SoftPWMBegin();
+//    SoftPWMSet(redPin, 0);
+//    SoftPWMSet(greenPin, 0);
+//    SoftPWMSet(bluePin, 0);
+//    SoftPWMSetFadeTime(redPin, 100, 1000);
+//    SoftPWMSetFadeTime(greenPin, 10, 10);
+//    SoftPWMSetFadeTime(bluePin, 10, 10);
+
+    // set color to blank
+    setColor(0, 0, 0);
 }
 
 void interrupt_routine() { mrf.interrupt_handler(); }
 
-void loop() { mrf.check_flags(&handle_rx, &handle_tx); }
+void loop() {mrf.check_flags(&handle_rx, &handle_tx); }
 
 void handle_rx() {
     rx_info_t *info = mrf.get_rxinfo();
+    uint8_t currPackNum = info->rx_data[0];
+    if (packetNum != currPackNum) // ignore packet if not correct packet
+    {
+      return;
+    }
 
     uint8_t encodedColor = info->rx_data[startId];
     uint8_t red = 0;
@@ -100,13 +116,6 @@ void handle_rx() {
     uint8_t green = 0;
 
     decodeColor(encodedColor, &red, &green, &blue);
-    Serial.print(red);
-    Serial.print(" ");
-    Serial.print(green);
-    Serial.print(" ");
-    Serial.print(blue);
-    Serial.print("\n");
-
     setColor(red, green, blue);
 
     mrf.rx_flush();
@@ -114,10 +123,11 @@ void handle_rx() {
 
 void handle_tx() {}
 
+// sets color given rgb values
 void setColor(int red, int green, int blue) {
-    //    SoftPWMSet(redPin, red);
-    //  SoftPWMSet(greenPin, green);
-    //  SoftPWMSet(bluePin, blue);
+//      SoftPWMSet(redPin, red);
+//      SoftPWMSet(greenPin, green);
+//      SoftPWMSet(bluePin, blue);
     analogWrite(redPin, red); // reds intensity is way too high
     analogWrite(greenPin, green);
     analogWrite(bluePin, blue);
