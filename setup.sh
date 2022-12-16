@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function run_no_output() {
     eval $1 > /dev/null 2>&1
@@ -6,11 +6,11 @@ function run_no_output() {
 
 echo "Installing requirements..."
 run_no_output "sudo apt install make cmake g++ clang-format git code"
-mkdir .git && cd .git
+mkdir .git_libs && cd .git_libs
 git clone https://github.com/nlohmann/json.git && cd json && mkdir build && cd build
-cmake .. && cmake --build . && sudo cmake --install .
+cmake .. && cmake --build . -j$(nproc) && sudo cmake --install .
 cd ../../..
-rm -rf .git
+rm -rf .git_libs
 echo "Requirements installed."
 echo ""
 
