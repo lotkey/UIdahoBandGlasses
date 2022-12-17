@@ -47,6 +47,8 @@ private:
   int m_numDevices = 0;
   int m_vendor = 0;
   int m_product = 0;
+  const unsigned int m_PACKET_SIZE = 96;
+  const unsigned int m_TIME_BETWEEN_PACKETS = 20000; 
 
   int openDevice(int index);
   int setBaudrate(int baudrate);

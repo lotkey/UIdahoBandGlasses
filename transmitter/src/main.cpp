@@ -25,15 +25,23 @@
 /// @author @lotkey Chris McVickar
 ////////////////////////////////////////////////////////////////
 #include "FTDI.hpp"
+#include "Instruction.hpp"
+#include "Writer.hpp"
 #include "colors.hpp"
 #include "common.hpp"
+#include "config.hpp"
 
 #include <ftdi.h>
+#include <nlohmann/json.hpp>
 
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <map>
+#include <sstream>
 #include <string>
 #include <unistd.h>
 
@@ -50,106 +58,146 @@ constexpr int Vendor = 0x0403;
 constexpr int Product = 0x6001;
 constexpr int Baudrate = 57600;
 
-void flashColor(transmitter::FTDI& ftdi, common::Color const& color);
+std::map<std::string, transmitter::Image> readLayouts();
 
 int main()
 {
-  transmitter::FTDI ftdi = transmitter::FTDI(Vendor, Product, Baudrate);
-  char letter;    // current letter user entered
-  int nbytes = 0; // number of bytes a package sent (global variable)
+  transmitter::config::setImageHeight(ImageHeight);
+  transmitter::config::setImageWidth(ImageWidth);
+  transmitter::FTDI ftdi(Vendor, Product, Baudrate);
+  transmitter::Writer writer(ftdi);
+  auto layouts = readLayouts();
+  std::string input;
 
   std::cerr << "Broadcasting." << std::endl;
 
-  // open curses session for display purposes
-  std::cout
-    << "Hello, welcome to Ben's Halftime Toolkit!\n"
-    << "a=twinkle routine; r=red flash; e=green flash; b=blue flash\n"
-    << "d=dark; g=gold flash;  w=white flash; t=test\n"
-    << "n=gold on; o=white on; v=orange\n"
-    << "m=magenta; y=yellow flash;  k=cyan flash\n"
-    << "c=christmas sparkle;  f=twinkle9; h=twinkle9; j=twinkle10; l=twinkle11\n"
-    << "s=rainbow short;  p=rainbow med\n"
-    << "q=sparkle; x=XMas solid; z=slow twinkle\n"
-    << "[=marqee one way; ]=marqee the other;\n"
-    << "(=slow marqee one way; )=slow marqee the other;\n\n"
-    << " dot key <.> to quit\n";
+  std::cerr << "Hello, welcome to the halftime toolkit!\n"
+            << "  r = red flash\n"
+            << "  e = green flash\n"
+            << "  b = blue flash\n"
+            << "  d = dark\n"
+            << "  g = gold flash\n"
+            << "  w = white flash\n"
+            << "  n = gold on\n"
+            << "  o = white on\n"
+            << "  v = orange\n"
+            << "  m = magenta\n"
+            << "  y = yellow flash\n"
+            << "  k = cyan flash\n"
+            << " dot key <.> to quit\n";
 
-  system("stty raw"); // enter raw mode so no newline is required for getchar
+  if (layouts.size() > 1) {
+    std::cerr
+      << "You can also enter one of the following keywords to use a custom layout:"
+      << std::endl;
+    for (auto const& [name, _] : layouts) {
+      std::cerr << "  " << name << std::endl;
+    }
+  }
 
-  // loop until a '.' character is detected
   while (true) {
-    letter = getchar();
-    switch (letter) {
-      case 'r': {
-        flashColor(ftdi, transmitter::colors::Red);
-        break;
-      }
-      case 'b': {
-        flashColor(ftdi, transmitter::colors::Blue);
-        break;
-      }
-      case 'e': {
-        flashColor(ftdi, transmitter::colors::Green);
-        break;
-      }
-      case 'd': {
-        ftdi.write(transmitter::Image(ImageHeight, ImageWidth));
-        break;
-      }
-      case 'g': {
-        flashColor(ftdi, transmitter::colors::Gold);
-        break;
-      }
-      case 'w': {
-        flashColor(ftdi, transmitter::colors::White);
-        break;
-      }
-      case 'n': {
-        ftdi.write(transmitter::Image(
-          ImageHeight, ImageWidth, transmitter::colors::Gold));
-        break;
-      }
-      case 'o': {
-        ftdi.write(transmitter::Image(
-          ImageHeight, ImageWidth, transmitter::colors::White));
-        break;
-      }
-      case 'v': {
-        ftdi.write(transmitter::Image(
-          ImageHeight, ImageWidth, transmitter::colors::Orange));
-        break;
-      }
-      case 'm': {
-        ftdi.write(transmitter::Image(
-          ImageHeight, ImageWidth, transmitter::colors::Magenta));
-        break;
-      }
-      case 'y': {
-        flashColor(ftdi, transmitter::colors::Yellow);
-        break;
-      }
-      case 'k': {
-        flashColor(ftdi, transmitter::colors::Cyan);
-        break;
-      }
-      case '.': {
-        ftdi.close(); // unnecessary, will close on destruction
-        std::cerr << "End of program" << std::endl;
-        return EXIT_SUCCESS;
-      }
-      default: {
-        usleep(DAB);
-        break;
+    std::getline(std::cin, input);
+    if (input == ".") {
+      break;
+    } else if (layouts.find(input) != layouts.end()) {
+      writer.write(transmitter::On(layouts[input]));
+    } else {
+      switch (input[0]) {
+        case 'r': {
+          writer.write(transmitter::Flash(transmitter::colors::Red, 0.5));
+          break;
+        }
+        case 'b': {
+          writer.write(transmitter::Flash(transmitter::colors::Blue, 0.5));
+          break;
+        }
+        case 'e': {
+          writer.write(transmitter::Flash(transmitter::colors::Green, 0.5));
+          break;
+        }
+        case 'd': {
+          writer.write(transmitter::On(transmitter::colors::Blank));
+          break;
+        }
+        case 'g': {
+          writer.write(transmitter::Flash(transmitter::colors::Gold, 0.5));
+          break;
+        }
+        case 'w': {
+          writer.write(transmitter::Flash(transmitter::colors::White, 0.5));
+          break;
+        }
+        case 'n': {
+          writer.write(transmitter::On(transmitter::colors::Gold));
+          break;
+        }
+        case 'o': {
+          writer.write(transmitter::On(transmitter::colors::White));
+          break;
+        }
+        case 'v': {
+          writer.write(transmitter::On(transmitter::colors::Orange));
+          break;
+        }
+        case 'm': {
+          writer.write(transmitter::On(transmitter::colors::Magenta));
+          break;
+        }
+        case 'y': {
+          writer.write(transmitter::Flash(transmitter::colors::Yellow, 0.5));
+          break;
+        }
+        case 'k': {
+          writer.write(transmitter::Flash(transmitter::colors::Cyan, 0.5));
+          break;
+        }
       }
     }
   }
+
+  writer.finish();
 }
 
-/// This is a temporary utility function. This functionality will be moved over
-/// to FTDI (or some other place) once the threading situation is figured out.
-void flashColor(transmitter::FTDI& ftdi, common::Color const& color)
+std::map<std::string, transmitter::Image> readLayouts()
 {
-  ftdi.write(transmitter::Image(ImageHeight, ImageWidth, color));
-  usleep(SLP);
-  ftdi.write(transmitter::Image(ImageHeight, ImageWidth));
+  if (!std::filesystem::is_directory("./layouts")) {
+    std::cerr << "No custom layouts to load." << std::endl;
+    return {};
+  }
+
+  std::map<std::string, transmitter::Image> layouts;
+
+  for (auto const& entry : std::filesystem::directory_iterator("./layouts")) {
+    std::ifstream infile(entry.path().string());
+    nlohmann::json data = nlohmann::json::parse(infile);
+    transmitter::Image image(ImageHeight, ImageWidth);
+
+    for (auto const& participant : data["layoutDetails"]) {
+      std::string colorStr = participant["color"];
+      colorStr = colorStr.substr(1);
+      int glassesNumber = participant["glassesNumber"];
+      glassesNumber -= 1;
+
+      int indexDim0 = glassesNumber / ImageHeight;
+      int indexDim1 = glassesNumber - indexDim0;
+
+      auto channelToInt = [](std::string const& channel) {
+        int x;
+        std::stringstream ss;
+        ss << std::hex << channel;
+        ss >> x;
+        return x;
+      };
+
+      int r = channelToInt(colorStr.substr(0, 2));
+      int g = channelToInt(colorStr.substr(2, 2));
+      int b = channelToInt(colorStr.substr(4, 2));
+
+      image.set(indexDim0, indexDim1, common::Color(r, g, b));
+    }
+
+    layouts[entry.path().filename().string()] = image;
+  }
+
+  return layouts;
 }

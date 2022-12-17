@@ -26,18 +26,18 @@ public:
   void operator=(Matrix const&);
   void operator=(Matrix&&);
 
-  const T* at(int row);
-  const T* at(int row) const;
+  T const* at(int row);
+  T const* at(int row) const;
   /// @returns A reference to the object at the position specified
   T& at(int row, int col);
   /// @returns A const reference to the object at the position specified
-  const T& at(int row, int col) const;
+  T const& at(int row, int col) const;
 
-  const T* operator[](int row);
-  const T* operator[](int row) const;
-  const T* operator()(int row);
-  const T* operator()(int row) const;
-  const T& operator()(int row, int col) const;
+  T const* operator[](int row);
+  T const* operator[](int row) const;
+  T const* operator()(int row);
+  T const* operator()(int row) const;
+  T const& operator()(int row, int col) const;
   T& operator()(int row, int col);
 
   /// @returns A pair with {numrows, numcols}
@@ -49,11 +49,12 @@ public:
   /// @returns The resized image
   Matrix<T> resize(int numrows, int numcols) const;
 
+  void set(int i, int j, T&& value) { m_data[i][j] = value; }
+
 protected:
   int m_numrows;
   int m_numcols;
   T** m_data = nullptr;
-  // std::vector<std::vector<T>> m_data;
 
   /// @returns A weighted sum of references from a floating point position.
   /// at(1.4, 0.3) would return the weighted sum of these pixels:
@@ -142,13 +143,13 @@ void Matrix<T>::freeMemory()
 }
 
 template<typename T>
-const T* Matrix<T>::at(int row) const
+T const* Matrix<T>::at(int row) const
 {
   return m_data[row];
 }
 
 template<typename T>
-const T* Matrix<T>::at(int row)
+T const* Matrix<T>::at(int row)
 {
   return m_data[row];
 }
@@ -160,37 +161,37 @@ T& Matrix<T>::at(int row, int col)
 }
 
 template<typename T>
-const T& Matrix<T>::at(int row, int col) const
+T const& Matrix<T>::at(int row, int col) const
 {
   return m_data[row][col];
 }
 
 template<typename T>
-const T* Matrix<T>::operator[](int row) const
+T const* Matrix<T>::operator[](int row) const
 {
   return at(row);
 }
 
 template<typename T>
-const T* Matrix<T>::operator[](int row)
+T const* Matrix<T>::operator[](int row)
 {
   return at(row);
 }
 
 template<typename T>
-const T* Matrix<T>::operator()(int row) const
+T const* Matrix<T>::operator()(int row) const
 {
   return at(row);
 }
 
 template<typename T>
-const T* Matrix<T>::operator()(int row)
+T const* Matrix<T>::operator()(int row)
 {
   return at(row);
 }
 
 template<typename T>
-const T& Matrix<T>::operator()(int row, int col) const
+T const& Matrix<T>::operator()(int row, int col) const
 {
   return at(row, col);
 }

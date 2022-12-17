@@ -54,7 +54,7 @@ private:
 
 template<class T>
 template<class... Args>
-Guarded<T>::Guarded(Args&&... args) : m_t(std::forward(args)...)
+Guarded<T>::Guarded(Args&&... args) : m_t(std::forward<Args&&...>(args)...)
 {}
 
 template<class T>
